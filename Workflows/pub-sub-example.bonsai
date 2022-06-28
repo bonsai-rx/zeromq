@@ -23,10 +23,61 @@
           <p1:Topic>data</p1:Topic>
         </Combinator>
       </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Subscriber">
+          <p1:Host>localhost</p1:Host>
+          <p1:Port>50020</p1:Port>
+          <p1:Topic>data</p1:Topic>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>h</osc:TypeTag>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Subscriber">
+          <p1:Host>localhost</p1:Host>
+          <p1:Port>50020</p1:Port>
+          <p1:Topic>data</p1:Topic>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>h</osc:TypeTag>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timer">
+          <rx:DueTime>PT0S</rx:DueTime>
+          <rx:Period>PT0.5S</rx:Period>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="osc:Format">
+        <osc:Address>/</osc:Address>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Publisher">
+          <p1:Host>localhost</p1:Host>
+          <p1:Port>50021</p1:Port>
+          <p1:Topic>data2</p1:Topic>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Subscriber">
+          <p1:Host>localhost</p1:Host>
+          <p1:Port>50021</p1:Port>
+          <p1:Topic>data2</p1:Topic>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>h</osc:TypeTag>
+      </Expression>
     </Nodes>
     <Edges>
       <Edge From="0" To="1" Label="Source1" />
       <Edge From="1" To="2" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+      <Edge From="10" To="11" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
