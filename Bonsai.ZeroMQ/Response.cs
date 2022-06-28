@@ -11,7 +11,6 @@ namespace Bonsai.ZeroMQ
     {
         public string Host { get; set; }
         public string Port { get; set; }
-        public string ResponseMessage { get; set; } // TODO - this should be an actual OSC message
 
         public override IObservable<byte[]> Process(IObservable<Message> source)
         {
@@ -23,9 +22,10 @@ namespace Bonsai.ZeroMQ
             response => source.Select(
                 message =>
                 {
-                    var bytes = response.ReceiveFrameBytes();
-                    response.SendFrame(ResponseMessage);
-                    return bytes;
+                    var messageReceive = response.ReceiveFrameBytes();
+                    response.SendFrame(message.Buffer.Array);
+
+                    return messageReceive;
                 }).Finally(() => { response.Dispose(); })
             ); ;
         }

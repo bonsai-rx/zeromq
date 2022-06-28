@@ -35,7 +35,6 @@
         <Combinator xsi:type="p1:Response">
           <p1:Host>localhost</p1:Host>
           <p1:Port>50020</p1:Port>
-          <p1:ResponseMessage>received</p1:ResponseMessage>
         </Combinator>
       </Expression>
     </Nodes>
