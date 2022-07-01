@@ -6,23 +6,23 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Publisher : Sink<Message>
+    // TODO doesn't work with multiple push sockets
+    public class Push : Sink<Message>
     {
         public string Host { get; set; }
         public string Port { get; set; }
-        public string Topic { get; set; }
 
         public override IObservable<Message> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
             {
-                var pub = new PublisherSocket($"@tcp://{Host}:{Port}");
-                return pub;
+                var push = new PushSocket();
+                push.Bind($"tcp://{Host}:{Port}");
+                return push;
             },
-            pub => source.Do(message =>
-            {
-                pub.SendMoreFrame(Topic).SendFrame(message.Buffer.Array);
-            }).Finally(() => { pub.Dispose(); }));
+            push => source.Do(message => {
+                push.SendFrame(message.Buffer.Array);
+            }).Finally(() => { push.Dispose(); })); 
         }
     }
 }

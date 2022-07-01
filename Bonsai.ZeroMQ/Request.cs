@@ -15,8 +15,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Using(() =>
             {
-                var request = new RequestSocket($">tcp://{Host}:{Port}");
-                //request.Bind($">tcp://{Host}:{Port}");
+                var request = new RequestSocket($"tcp://{Host}:{Port}");
                 return request;
             },
             request => source.Select(
