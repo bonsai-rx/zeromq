@@ -21,7 +21,7 @@ namespace Bonsai.ZeroMQ
                 return push;
             },
             push => source.Do(message => {
-                push.SendFrame(message.Buffer.Array);
+                push.TrySendFrame(message.Buffer.Array);
             }).Finally(() => { push.Dispose(); })); 
         }
     }
