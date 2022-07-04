@@ -22,9 +22,8 @@ namespace Bonsai.ZeroMQ
                 message =>
                 {
                     request.SendFrame(message.Buffer.Array);
-                    byte[] messageReturn = request.ReceiveFrameBytes();
+                    return request.ReceiveFrameBytes();
 
-                    return messageReturn;
                 }).Finally(() => { request.Dispose(); })
             );;
         }
