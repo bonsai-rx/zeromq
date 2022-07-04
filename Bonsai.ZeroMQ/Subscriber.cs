@@ -39,7 +39,7 @@ namespace Bonsai.ZeroMQ
                     observer.OnNext(messagePayload);
                 };
                 sub.ReceiveReady += handler;
-                poller.Run();
+                poller.Run(); // start socket poller
 
                 return Disposable.Create(() =>
                 {
