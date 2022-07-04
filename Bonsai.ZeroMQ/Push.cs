@@ -19,8 +19,14 @@ namespace Bonsai.ZeroMQ
             {
                 var push = new PushSocket();
 
-                if (SocketConnection == SocketSettings.SocketConnection.Bind) { push.Bind($"tcp://{Host}:{Port}"); } 
-                else { push.Connect($"tcp://{Host}:{Port}"); }
+                switch (SocketConnection)
+                {
+                    case SocketSettings.SocketConnection.Bind:
+                        push.Bind($"tcp://{Host}:{Port}"); break;
+                    case SocketSettings.SocketConnection.Connect:
+                    default:
+                        push.Connect($"tcp://{Host}:{Port}"); break;
+                }
 
                 return push;
             },

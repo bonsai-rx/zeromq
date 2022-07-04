@@ -11,6 +11,7 @@ namespace Bonsai.ZeroMQ
     {
         public string Host { get; set; }
         public string Port { get; set; }
+        public SocketSettings.SocketConnection SocketConnection { get; set; }
 
         public override IObservable<byte[]> Process(IObservable<Message> source)
         {

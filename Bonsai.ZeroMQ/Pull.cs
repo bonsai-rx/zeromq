@@ -19,8 +19,14 @@ namespace Bonsai.ZeroMQ
             {
                 var pull = new PullSocket();
 
-                if (SocketConnection == SocketSettings.SocketConnection.Bind) { pull.Bind($"tcp://{Host}:{Port}"); }
-                else { pull.Connect($"tcp://{Host}:{Port}"); }
+                switch (SocketConnection)
+                {
+                    case SocketSettings.SocketConnection.Bind:
+                        pull.Bind($"tcp://{Host}:{Port}"); break;
+                    case SocketSettings.SocketConnection.Connect:
+                    default:
+                        pull.Connect($"tcp://{Host}:{Port}"); break;
+                }
 
                 return Task.Factory.StartNew(() =>
                 {
