@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Bonsai.Osc;
@@ -16,10 +17,10 @@ namespace Bonsai.ZeroMQ
 
         public override IObservable<byte[]> Generate()
         {
-            return Observable.Create<byte[]>((observer, cancellationToken) =>
+            return Observable.Create<byte[]>(observer =>
             {
+                // Socket setup
                 var sub = new SubscriberSocket();
-
                 switch (SocketConnection)
                 {
                     case SocketSettings.SocketConnection.Bind:
@@ -28,21 +29,42 @@ namespace Bonsai.ZeroMQ
                     default:
                         sub.Connect($"tcp://{Host}:{Port}"); break;
                 }
-
                 sub.Subscribe(Topic);
+                var poller = new NetMQPoller { sub };
 
-                return Task.Factory.StartNew(() =>
+                EventHandler<NetMQSocketEventArgs> handler = (sender, e) =>
                 {
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        string messageTopic = sub.ReceiveFrameString();
-                        byte[] messagePayload = sub.ReceiveFrameBytes();
-                        observer.OnNext(messagePayload);
-                    }
-                }).ContinueWith(task => {
+                    string messageTopic = sub.ReceiveFrameString();
+                    byte[] messagePayload = sub.ReceiveFrameBytes();
+                    observer.OnNext(messagePayload);
+                };
+                sub.ReceiveReady += handler;
+                poller.Run();
+
+                return Disposable.Create(() =>
+                {
+                    sub.ReceiveReady -= handler;
                     sub.Dispose();
-                    task.Dispose();
                 });
+
+                //return Disposable.Create(() =>
+                //{
+                //    sub.ReceiveReady -= handler;
+                //});
+
+                //// Listen task
+                //return Task.Factory.StartNew(() =>
+                //{
+                //    while (!cancellationToken.IsCancellationRequested)
+                //    {
+                //        string messageTopic = sub.ReceiveFrameString();
+                //        byte[] messagePayload = sub.ReceiveFrameBytes();
+                //        observer.OnNext(messagePayload);
+                //    }
+                //}).ContinueWith(task => {
+                //    sub.Dispose();
+                //    task.Dispose();
+                //});
             });
         }
     }
