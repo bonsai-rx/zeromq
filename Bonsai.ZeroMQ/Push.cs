@@ -11,13 +11,17 @@ namespace Bonsai.ZeroMQ
     {
         public string Host { get; set; }
         public string Port { get; set; }
+        public SocketSettings.SocketConnection SocketConnection { get; set; }
 
         public override IObservable<Message> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
             {
                 var push = new PushSocket();
-                push.Bind($"tcp://{Host}:{Port}");
+
+                if (SocketConnection == SocketSettings.SocketConnection.Bind) { push.Bind($"tcp://{Host}:{Port}"); } 
+                else { push.Connect($"tcp://{Host}:{Port}"); }
+
                 return push;
             },
             push => source.Do(message => {
@@ -25,4 +29,6 @@ namespace Bonsai.ZeroMQ
             }).Finally(() => { push.Dispose(); })); 
         }
     }
+
+
 }

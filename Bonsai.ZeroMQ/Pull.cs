@@ -11,13 +11,16 @@ namespace Bonsai.ZeroMQ
     {
         public string Host { get; set; }
         public string Port { get; set; }
+        public SocketSettings.SocketConnection SocketConnection { get; set; }
 
         public override IObservable<byte[]> Generate()
         {
             return Observable.Create<byte[]>((observer, cancellationToken) =>
             {
                 var pull = new PullSocket();
-                pull.Connect($"tcp://{Host}:{Port}");
+
+                if (SocketConnection == SocketSettings.SocketConnection.Bind) { pull.Bind($"tcp://{Host}:{Port}"); }
+                else { pull.Connect($"tcp://{Host}:{Port}"); }
 
                 return Task.Factory.StartNew(() =>
                 {
