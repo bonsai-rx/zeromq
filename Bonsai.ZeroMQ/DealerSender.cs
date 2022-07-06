@@ -7,24 +7,19 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class DealerSender : Sink<Message>
+    [Combinator]
+    public class DealerSender
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
-        public override IObservable<Message> Process(IObservable<Message> source)
+        public IObservable<Message> Process(IObservable<DealerSocket> source, IObservable<Message> message)
         {
-            return Observable.Using(() =>
-            {
-                var dealer = new DealerSocket();
-                dealer.Connect($"tcp://{Host}:{Port}");
-                return dealer;
-            },
-            dealer => source.Do(message =>
-            {
-                dealer.SendMoreFrameEmpty().SendFrame(message.Buffer.Array);
-            }).Finally(() => { dealer.Dispose(); })
-            );
+            return source.SelectMany(dealer => {
+                return message.Do(m => {
+                    dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
+                });
+            });
         }
     }
 }
