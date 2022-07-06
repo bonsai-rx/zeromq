@@ -25,6 +25,15 @@
       <Expression xsi:type="osc:Parse">
         <osc:TypeTag>h</osc:TypeTag>
       </Expression>
+      <Expression xsi:type="osc:Format">
+        <osc:Address>/</osc:Address>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:RouterSender" />
+      </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:CreateDealer">
           <p1:Host>localhost</p1:Host>
@@ -64,15 +73,20 @@
     </Nodes>
     <Edges>
       <Edge From="0" To="1" Label="Source1" />
+      <Edge From="0" To="7" Label="Source1" />
       <Edge From="1" To="2" Label="Source1" />
       <Edge From="1" To="3" Label="Source1" />
+      <Edge From="2" To="6" Label="Source1" />
       <Edge From="3" To="4" Label="Source1" />
-      <Edge From="5" To="8" Label="Source1" />
-      <Edge From="6" To="7" Label="Source1" />
-      <Edge From="7" To="8" Label="Source2" />
-      <Edge From="9" To="12" Label="Source1" />
-      <Edge From="10" To="11" Label="Source1" />
-      <Edge From="11" To="12" Label="Source2" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="5" To="6" Label="Source2" />
+      <Edge From="6" To="7" Label="Source2" />
+      <Edge From="8" To="11" Label="Source1" />
+      <Edge From="9" To="10" Label="Source1" />
+      <Edge From="10" To="11" Label="Source2" />
+      <Edge From="12" To="15" Label="Source1" />
+      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="14" To="15" Label="Source2" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
