@@ -7,13 +7,13 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class RouterListener : Combinator<RouterSocket, uint>
+    public class RouterListener : Combinator<RouterSocket, RouterListener.ClientMessage>
     {
-        public override IObservable<uint> Process(IObservable<RouterSocket> source)
+        public override IObservable<ClientMessage> Process(IObservable<RouterSocket> source)
         {
             return source.SelectMany(router =>
             {
-                return Observable.Create<uint>((observer, cancellationToken) => 
+                return Observable.Create<ClientMessage>((observer, cancellationToken) => 
                 {
                     return Task.Factory.StartNew(() =>
                     {
@@ -23,11 +23,17 @@ namespace Bonsai.ZeroMQ
                             uint clientAddress = (uint)clientMessage[0].ConvertToInt32();
                             var messagePayload = clientMessage[2].ToByteArray();
 
-                            observer.OnNext(clientAddress);
+                            observer.OnNext(new ClientMessage { ClientAddress = clientAddress, MessagePayload = messagePayload });
                         }
                     });    
                 });
             });
+        }
+
+        public struct ClientMessage
+        {
+            public uint ClientAddress;
+            public byte[] MessagePayload;
         }
     }
 }

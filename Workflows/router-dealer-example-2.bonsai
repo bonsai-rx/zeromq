@@ -2,11 +2,29 @@
 <WorkflowBuilder Version="2.6.3"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ZeroMQ;assembly=Bonsai.ZeroMQ"
-                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:osc="clr-namespace:Bonsai.Osc;assembly=Bonsai.Osc"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:CreateRouter">
+          <p1:Host>localhost</p1:Host>
+          <p1:Port>5557</p1:Port>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:RouterListener" />
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>ClientAddress</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>MessagePayload</Selector>
+      </Expression>
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>h</osc:TypeTag>
+      </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:CreateDealer">
           <p1:Host>localhost</p1:Host>
@@ -26,20 +44,35 @@
         <Combinator xsi:type="p1:DealerSender" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:CreateRouter">
+        <Combinator xsi:type="p1:CreateDealer">
           <p1:Host>localhost</p1:Host>
           <p1:Port>5557</p1:Port>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:RouterListener" />
+        <Combinator xsi:type="rx:Timer">
+          <rx:DueTime>PT0S</rx:DueTime>
+          <rx:Period>PT1.5S</rx:Period>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="osc:Format">
+        <osc:Address>/</osc:Address>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:DealerSender" />
       </Expression>
     </Nodes>
     <Edges>
-      <Edge From="0" To="3" Label="Source1" />
+      <Edge From="0" To="1" Label="Source1" />
       <Edge From="1" To="2" Label="Source1" />
-      <Edge From="2" To="3" Label="Source2" />
-      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="1" To="3" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="5" To="8" Label="Source1" />
+      <Edge From="6" To="7" Label="Source1" />
+      <Edge From="7" To="8" Label="Source2" />
+      <Edge From="9" To="12" Label="Source1" />
+      <Edge From="10" To="11" Label="Source1" />
+      <Edge From="11" To="12" Label="Source2" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
