@@ -12,33 +12,6 @@ namespace Bonsai.ZeroMQ
         public string Host { get; set; }
         public string Port { get; set; }
 
-        //public override IObservable<IncomingMessage> Process(IObservable<Message> source)
-        //{
-        //    return Observable.Create<IncomingMessage>((observer, cancellationToken) =>
-        //    {
-        //        var router = new RouterSocket();
-        //        router.Bind($"tcp://{Host}:{Port}");
-
-        //        return Task.Factory.StartNew(() =>
-        //        {
-        //            while (!cancellationToken.IsCancellationRequested)
-        //            {
-        //                var clientMessage = router.ReceiveMultipartMessage();
-        //                uint clientAddress = (uint)clientMessage[0].ConvertToInt32();
-        //                var messagePayload = clientMessage[2].ToByteArray();
-
-        //                // TODO - doesn't send anything back to client
-
-        //                observer.OnNext(new IncomingMessage(clientAddress, messagePayload));
-        //            }
-        //        }).ContinueWith(task =>
-        //        {
-        //            router.Dispose();
-        //            task.Dispose();
-        //        });
-        //    });
-        //}
-
         public override IObservable<IncomingMessage> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
