@@ -7,32 +7,25 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class RouterListener : Source<uint>
+    public class RouterListener : Combinator<RouterSocket, uint>
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
-
-        public override IObservable<uint> Generate()
+        public override IObservable<uint> Process(IObservable<RouterSocket> source)
         {
-            return Observable.Create<uint>((observer, cancellationToken) =>
+            return source.SelectMany(router =>
             {
-                var router = new RouterSocket();
-                router.Bind($"tcp://{Host}:{Port}");
-
-                return Task.Factory.StartNew(() =>
+                return Observable.Create<uint>((observer, cancellationToken) => 
                 {
-                    while (!cancellationToken.IsCancellationRequested)
+                    return Task.Factory.StartNew(() =>
                     {
-                        var clientMessage = router.ReceiveMultipartMessage();
-                        uint clientAddress = (uint)clientMessage[0].ConvertToInt32();
-                        var messagePayload = clientMessage[2].ToByteArray();
+                        while (!cancellationToken.IsCancellationRequested)
+                        {
+                            var clientMessage = router.ReceiveMultipartMessage();
+                            uint clientAddress = (uint)clientMessage[0].ConvertToInt32();
+                            var messagePayload = clientMessage[2].ToByteArray();
 
-                        observer.OnNext(clientAddress);
-                    }
-                }).ContinueWith(task =>
-                {
-                    router.Dispose();
-                    task.Dispose();
+                            observer.OnNext(clientAddress);
+                        }
+                    });    
                 });
             });
         }
