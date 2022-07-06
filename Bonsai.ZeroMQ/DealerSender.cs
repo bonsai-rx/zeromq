@@ -10,9 +10,6 @@ namespace Bonsai.ZeroMQ
     [Combinator]
     public class DealerSender
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
-
         public IObservable<Message> Process(IObservable<DealerSocket> source, IObservable<Message> message)
         {
             return source.SelectMany(dealer => {
