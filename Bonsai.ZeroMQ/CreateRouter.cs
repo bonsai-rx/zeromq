@@ -7,24 +7,33 @@ namespace Bonsai.ZeroMQ
 {
     public class CreateRouter : Source<RouterSocket>
     {
+        public string Name { get; set; }
         public string Host { get; set; }
         public string Port { get; set; }
 
         public override IObservable<RouterSocket> Generate()
         {
-            return Observable.Create<RouterSocket>(observer =>
+            return Observable.Using(() =>
             {
                 var router = new RouterSocket();
                 router.Bind($"tcp://{Host}:{Port}");
+                return router;
+            },
+            router => Observable.Return(router).Concat(Observable.Never(router)));
 
-                observer.OnNext(router);
+            //return Observable.Create<RouterSocket>(observer =>
+            //{
+            //    var router = new RouterSocket();
+            //    router.Bind($"tcp://{Host}:{Port}");
 
-                return Disposable.Create(() =>
-                {
-                    router.Disconnect($"tcp://{Host}:{Port}");
-                    router.Dispose();
-                });
-            });
+            //    observer.OnNext(router);
+
+            //    return Disposable.Create(() =>
+            //    {
+            //        router.Disconnect($"tcp://{Host}:{Port}");
+            //        router.Dispose();
+            //    });
+            //});
         }
     }
 }
