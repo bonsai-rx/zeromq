@@ -10,20 +10,33 @@ namespace Bonsai.ZeroMQ
     [Combinator]
     public class RouterSender
     {
-        public IObservable<Tuple<uint, Message>> Process(IObservable<RouterSocket> source, IObservable<Tuple<uint, Message>> clientMessage)
+        public IObservable<Tuple<byte[], Message>> Process(IObservable<RouterSocket> source, IObservable<Tuple<byte[], Message>> clientMessage)
         {
-            return clientMessage.Do(m =>
+            return source.SelectMany(router =>
             {
-                var router = source.TakeLast(1);
-                var messageToClient = new NetMQMessage();
-                messageToClient.Append(m.Item1);
-                messageToClient.AppendEmptyFrame();
-                messageToClient.Append(m.Item2.Buffer.Array);
-                router.Do(r =>
+                return clientMessage.Do(message =>
                 {
-                    r.SendMultipartMessage(messageToClient);
+                    var messageToClient = new NetMQMessage();
+                    messageToClient.Append(message.Item1);
+                    messageToClient.AppendEmptyFrame();
+                    messageToClient.Append(message.Item2.Buffer.Array);
+
+                    router.SendMultipartMessage(messageToClient);
                 });
             });
+            //return clientMessage.Do(m =>
+            //{
+            //    var router = source.TakeLast(1);
+            //    var messageToClient = new NetMQMessage();
+            //    messageToClient.Append(m.Item1);
+            //    messageToClient.AppendEmptyFrame();
+            //    messageToClient.Append(m.Item2.Buffer.Array);
+            //    router.Do(r =>
+            //    {
+            //        Console.WriteLine("Sending");
+            //        r.SendMultipartMessage(messageToClient);
+            //    });
+            //});
         }
     }
 }

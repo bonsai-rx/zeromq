@@ -11,8 +11,17 @@ namespace Bonsai.ZeroMQ
     {
         public IObservable<Message> Process(IObservable<DealerSocket> source, IObservable<Message> message)
         {
-            return source.SelectMany(dealer => {
-                return message.Do(m => {
+            //return message.Do(m =>
+            //{
+            //    source.Do(d =>
+            //    {
+            //        d.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
+            //    });
+            //});
+            return source.SelectMany(dealer =>
+            {
+                return message.Do(m =>
+                {
                     dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
                 });
             });

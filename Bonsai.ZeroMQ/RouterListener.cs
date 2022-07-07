@@ -20,7 +20,7 @@ namespace Bonsai.ZeroMQ
                         while (!cancellationToken.IsCancellationRequested)
                         {
                             var clientMessage = router.ReceiveMultipartMessage();
-                            uint clientAddress = (uint)clientMessage[0].ConvertToInt32();
+                            byte[] clientAddress = clientMessage[0].ToByteArray();
                             var messagePayload = clientMessage[2].ToByteArray();
 
                             observer.OnNext(new ClientMessage { ClientAddress = clientAddress, MessagePayload = messagePayload });
@@ -32,7 +32,7 @@ namespace Bonsai.ZeroMQ
 
         public struct ClientMessage
         {
-            public uint ClientAddress;
+            public byte[] ClientAddress;
             public byte[] MessagePayload;
         }
     }

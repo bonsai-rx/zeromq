@@ -28,7 +28,7 @@ namespace Bonsai.ZeroMQ
                     var messagePayload = clientMessage[2].ToByteArray(); // Index as two as 2nd message entry is empty delimiter
 
                     var messageToClient = new NetMQMessage();
-                    messageToClient.Append(clientMessage[0]);
+                    messageToClient.Append(clientMessage[0].ToByteArray());
                     messageToClient.AppendEmptyFrame();
                     messageToClient.Append(message.Buffer.Array);
                     router.SendMultipartMessage(messageToClient);
