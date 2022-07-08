@@ -19,8 +19,7 @@ namespace Bonsai.ZeroMQ
                     return replayMessage.Do(message =>
                     {
                         var messageToClient = new NetMQMessage();
-                        //messageToClient.Append(message.Item1);
-                        messageToClient.Append(new byte[5]);
+                        messageToClient.Append(message.Item1);
                         messageToClient.AppendEmptyFrame();
                         messageToClient.Append(message.Item2.Buffer.Array);
 
