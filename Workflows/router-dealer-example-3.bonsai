@@ -8,34 +8,16 @@
   <Workflow>
     <Nodes>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:CreateRouter">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5557</p1:Port>
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="PublishSubject">
-        <Name>Server</Name>
-      </Expression>
-      <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:CreateDealer">
           <p1:Host>localhost</p1:Host>
           <p1:Port>5557</p1:Port>
         </Combinator>
       </Expression>
-      <Expression xsi:type="PublishSubject">
-        <Name>Client1</Name>
-      </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:CreateDealer">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5557</p1:Port>
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="PublishSubject">
-        <Name>Client2</Name>
+      <Expression xsi:type="BehaviorSubject">
+        <Name>client1</Name>
       </Expression>
       <Expression xsi:type="SubscribeSubject">
-        <Name>Client1</Name>
+        <Name>client1</Name>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="rx:Timer">
@@ -49,17 +31,12 @@
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:DealerSender" />
       </Expression>
-      <Expression xsi:type="SubscribeSubject">
-        <Name>Client2</Name>
-      </Expression>
     </Nodes>
     <Edges>
       <Edge From="0" To="1" Label="Source1" />
-      <Edge From="2" To="3" Label="Source1" />
-      <Edge From="4" To="5" Label="Source1" />
-      <Edge From="6" To="9" Label="Source1" />
-      <Edge From="7" To="8" Label="Source1" />
-      <Edge From="8" To="9" Label="Source2" />
+      <Edge From="2" To="5" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source2" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
