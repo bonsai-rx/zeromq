@@ -7,20 +7,19 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    [Combinator]
-    public class Router
+    public class Router : Source<Router.ClientMessage>
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
         // Act only as client listener
-        public IObservable<ClientMessage> Process()
+        public override IObservable<ClientMessage> Generate()
         {
-            return Process(null);
+            return Generate(null);
         }
 
         // Act as both client listener and message sender
-        public IObservable<ClientMessage> Process(IObservable<Tuple<byte[], Message>> message)
+        public IObservable<ClientMessage> Generate(IObservable<Tuple<byte[], Message>> message)
         {
             return Observable.Create<ClientMessage>((observer, cancellationToken) =>
             {

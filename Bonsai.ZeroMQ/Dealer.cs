@@ -7,20 +7,19 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    [Combinator]
-    public class Dealer
+    public class Dealer : Source<byte[]>
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
-        // Actonly as server listener - TODO this should call overload with empty message to avoid repeated code
-        public IObservable<byte[]> Process()
+        // Actonly as server listener
+        public override IObservable<byte[]> Generate()
         {
-            return Process(null);
+            return Generate(null);
         }
 
         // Acts as both server listener and message sender
-        public IObservable<byte[]> Process(IObservable<Message> message)
+        public IObservable<byte[]> Generate(IObservable<Message> message)
         {
             return Observable.Create<byte[]>((observer, cancellationToken) =>
             {
