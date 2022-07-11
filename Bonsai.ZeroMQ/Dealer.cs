@@ -13,43 +13,30 @@ namespace Bonsai.ZeroMQ
         public string Host { get; set; }
         public string Port { get; set; }
 
-        // Act as listener with no message - TODO this should call overload with empty message to avoid repeated code
+        // Actonly as server listener - TODO this should call overload with empty message to avoid repeated code
         public IObservable<byte[]> Process()
         {
-            return Observable.Create<byte[]>((observer, cancellationToken) =>
-            {
-                var dealer = new DealerSocket();
-                dealer.Connect($"tcp://{Host}:{Port}");
-
-                return Task.Factory.StartNew(() =>
-                {
-                    while(!cancellationToken.IsCancellationRequested)
-                    {
-                        var messageFromServer = dealer.ReceiveMultipartMessage();
-                        observer.OnNext(messageFromServer[1].ToByteArray());
-                    }
-                });
-            });
+            return Process(null);
         }
 
-        // Acts as sender and listener
+        // Acts as both server listener and message sender
         public IObservable<byte[]> Process(IObservable<Message> message)
         {
             return Observable.Create<byte[]>((observer, cancellationToken) =>
             {
                 var dealer = new DealerSocket();
                 dealer.Connect($"tcp://{Host}:{Port}");
+                cancellationToken.Register(() => { dealer.Dispose(); });
 
-                var sender = message.Do(m =>
+                if (message != null)
                 {
-                    dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
-                }).Subscribe();
+                    var sender = message.Do(m =>
+                    {
+                        dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
+                    }).Subscribe();
 
-                cancellationToken.Register(() =>
-                {
-                    sender.Dispose();
-                    dealer.Dispose();
-                });
+                    cancellationToken.Register(() => { sender.Dispose(); });
+                }
 
                 return Task.Factory.StartNew(() =>
                 {
