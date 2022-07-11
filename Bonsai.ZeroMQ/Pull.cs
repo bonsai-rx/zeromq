@@ -7,15 +7,15 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Pull : Source<byte[]>
+    public class Pull : Source<ZeroMQMessage>
     {
         public string Host { get; set; }
         public string Port { get; set; }
         public SocketSettings.SocketConnection SocketConnection { get; set; }
 
-        public override IObservable<byte[]> Generate()
+        public override IObservable<ZeroMQMessage> Generate()
         {
-            return Observable.Create<byte[]>((observer, cancellationToken) =>
+            return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
                 var pull = new PullSocket();
 
@@ -33,7 +33,13 @@ namespace Bonsai.ZeroMQ
                     while (!cancellationToken.IsCancellationRequested)
                     {
                         byte[] messagePayload = pull.ReceiveFrameBytes();
-                        observer.OnNext(messagePayload);
+
+                        observer.OnNext(new ZeroMQMessage
+                        {
+                            Address = null,
+                            Message = messagePayload,
+                            MessageType = MessageType.Pull
+                        });
                     }
                 }).ContinueWith(task => {
                     pull.Dispose();

@@ -30,25 +30,8 @@
           <p1:SocketConnection>Connect</p1:SocketConnection>
         </Combinator>
       </Expression>
-      <Expression xsi:type="osc:Parse">
-        <osc:TypeTag>h</osc:TypeTag>
-      </Expression>
-      <Expression xsi:type="osc:Format">
-        <osc:Address>/</osc:Address>
-      </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:Push">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5558</p1:Port>
-          <p1:SocketConnection>Connect</p1:SocketConnection>
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:Pull">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5557</p1:Port>
-          <p1:SocketConnection>Connect</p1:SocketConnection>
-        </Combinator>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Message</Selector>
       </Expression>
       <Expression xsi:type="osc:Parse">
         <osc:TypeTag>h</osc:TypeTag>
@@ -69,6 +52,32 @@
           <p1:Port>5557</p1:Port>
           <p1:SocketConnection>Connect</p1:SocketConnection>
         </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Message</Selector>
+      </Expression>
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>h</osc:TypeTag>
+      </Expression>
+      <Expression xsi:type="osc:Format">
+        <osc:Address>/</osc:Address>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Push">
+          <p1:Host>localhost</p1:Host>
+          <p1:Port>5558</p1:Port>
+          <p1:SocketConnection>Connect</p1:SocketConnection>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Pull">
+          <p1:Host>localhost</p1:Host>
+          <p1:Port>5557</p1:Port>
+          <p1:SocketConnection>Connect</p1:SocketConnection>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Message</Selector>
       </Expression>
       <Expression xsi:type="osc:Parse">
         <osc:TypeTag>h</osc:TypeTag>
@@ -90,6 +99,9 @@
           <p1:SocketConnection>Bind</p1:SocketConnection>
         </Combinator>
       </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Message</Selector>
+      </Expression>
       <Expression xsi:type="osc:Parse">
         <osc:TypeTag>h</osc:TypeTag>
       </Expression>
@@ -100,13 +112,17 @@
       <Edge From="3" To="4" Label="Source1" />
       <Edge From="4" To="5" Label="Source1" />
       <Edge From="5" To="6" Label="Source1" />
-      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="6" To="7" Label="Source1" />
       <Edge From="8" To="9" Label="Source1" />
       <Edge From="9" To="10" Label="Source1" />
+      <Edge From="10" To="11" Label="Source1" />
       <Edge From="11" To="12" Label="Source1" />
-      <Edge From="12" To="13" Label="Source1" />
       <Edge From="13" To="14" Label="Source1" />
+      <Edge From="14" To="15" Label="Source1" />
       <Edge From="15" To="16" Label="Source1" />
+      <Edge From="16" To="17" Label="Source1" />
+      <Edge From="18" To="19" Label="Source1" />
+      <Edge From="19" To="20" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

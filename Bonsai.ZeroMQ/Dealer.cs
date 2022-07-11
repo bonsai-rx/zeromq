@@ -7,21 +7,21 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Dealer : Source<byte[]>
+    public class Dealer : Source<ZeroMQMessage>
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
         // Actonly as server listener
-        public override IObservable<byte[]> Generate()
+        public override IObservable<ZeroMQMessage> Generate()
         {
             return Generate(null);
         }
 
         // Acts as both server listener and message sender
-        public IObservable<byte[]> Generate(IObservable<Message> message)
+        public IObservable<ZeroMQMessage> Generate(IObservable<Message> message)
         {
-            return Observable.Create<byte[]>((observer, cancellationToken) =>
+            return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
                 var dealer = new DealerSocket();
                 dealer.Connect($"tcp://{Host}:{Port}");
@@ -42,7 +42,12 @@ namespace Bonsai.ZeroMQ
                     while (!cancellationToken.IsCancellationRequested)
                     {
                         var messageFromServer = dealer.ReceiveMultipartMessage();
-                        observer.OnNext(messageFromServer[1].ToByteArray());
+                        observer.OnNext(new ZeroMQMessage
+                        {
+                            Address = null,
+                            Message = messageFromServer[1].ToByteArray(),
+                            MessageType = MessageType.Dealer
+                        });
                     }
                 });
             });

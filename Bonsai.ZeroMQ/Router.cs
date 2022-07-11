@@ -7,21 +7,21 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Router : Source<Router.ClientMessage>
+    public class Router : Source<ZeroMQMessage>
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
         // Act only as client listener
-        public override IObservable<ClientMessage> Generate()
+        public override IObservable<ZeroMQMessage> Generate()
         {
             return Generate(null);
         }
 
         // Act as both client listener and message sender
-        public IObservable<ClientMessage> Generate(IObservable<Tuple<byte[], Message>> message)
+        public IObservable<ZeroMQMessage> Generate(IObservable<Tuple<byte[], Message>> message)
         {
-            return Observable.Create<ClientMessage>((observer, cancellationToken) =>
+            return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
                 var router = new RouterSocket();
                 router.Bind($"tcp://{Host}:{Port}");
@@ -47,17 +47,16 @@ namespace Bonsai.ZeroMQ
                         var messageFromClient = router.ReceiveMultipartMessage();
                         byte[] clientAddress = messageFromClient[0].ToByteArray();
                         byte[] messagePayload = messageFromClient[2].ToByteArray();
-                        
-                        observer.OnNext(new ClientMessage { ClientAddress = clientAddress, MessagePayload = messagePayload });
+
+                        observer.OnNext(new ZeroMQMessage
+                        {
+                            Address = clientAddress,
+                            Message = messagePayload,
+                            MessageType = MessageType.Router
+                        });
                     }
                 });
             });
-        }
-
-        public struct ClientMessage
-        {
-            public byte[] ClientAddress;
-            public byte[] MessagePayload;
         }
     }
 }

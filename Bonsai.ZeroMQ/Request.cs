@@ -6,12 +6,12 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Request : Combinator<Message, byte[]>
+    public class Request : Combinator<Message, ZeroMQMessage>
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
-        public override IObservable<byte[]> Process(IObservable<Message> source)
+        public override IObservable<ZeroMQMessage> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
             {
@@ -22,8 +22,13 @@ namespace Bonsai.ZeroMQ
                 message =>
                 {
                     request.SendFrame(message.Buffer.Array);
-                    return request.ReceiveFrameBytes();
 
+                    return new ZeroMQMessage
+                    {
+                        Address = null,
+                        Message = request.ReceiveFrameBytes(),
+                        MessageType = MessageType.Request
+                    };
                 }).Finally(() => { request.Dispose(); })
             );;
         }

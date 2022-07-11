@@ -6,16 +6,16 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Subscriber : Source<byte[]>
+    public class Subscriber : Source<ZeroMQMessage>
     {
         public string Host { get; set; }
         public string Port { get; set; }
         public string Topic { get; set; }
         public SocketSettings.SocketConnection SocketConnection { get; set; }
 
-        public override IObservable<byte[]> Generate()
+        public override IObservable<ZeroMQMessage> Generate()
         {
-            return Observable.Create<byte[]>((observer, cancellationToken) =>
+            return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
                 var sub = new SubscriberSocket();
 
@@ -36,7 +36,13 @@ namespace Bonsai.ZeroMQ
                     {
                         string messageTopic = sub.ReceiveFrameString();
                         byte[] messagePayload = sub.ReceiveFrameBytes();
-                        observer.OnNext(messagePayload);
+
+                        observer.OnNext(new ZeroMQMessage
+                        {
+                            Address = null,
+                            Message = messagePayload,
+                            MessageType = MessageType.Subscribe
+                        });
                     }
                 }).ContinueWith(task => {
                     sub.Dispose();
