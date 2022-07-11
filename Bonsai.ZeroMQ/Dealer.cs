@@ -35,26 +35,21 @@ namespace Bonsai.ZeroMQ
         // Acts as sender and listener
         public IObservable<byte[]> Process(IObservable<Message> message)
         {
-            // TODO - this needs to be disposed along with everything else
-            Observable.Using(() =>
-            {
-                var dealer = new DealerSocket();
-                dealer.Connect($"tcp://{Host}:{Port}");
-                return dealer;
-            },
-            dealer =>
-            {
-                return message.Do(m =>
-                {
-                    dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
-                    Console.WriteLine("sending");
-                });
-            }).Subscribe();
-
             return Observable.Create<byte[]>((observer, cancellationToken) =>
             {
                 var dealer = new DealerSocket();
                 dealer.Connect($"tcp://{Host}:{Port}");
+
+                var sender = message.Do(m =>
+                {
+                    dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
+                }).Subscribe();
+
+                cancellationToken.Register(() =>
+                {
+                    sender.Dispose();
+                    dealer.Dispose();
+                });
 
                 return Task.Factory.StartNew(() =>
                 {
