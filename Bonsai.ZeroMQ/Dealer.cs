@@ -7,30 +7,45 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Dealer : Combinator<Message, byte[]>
+    public class Dealer : Source<byte[]>
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
-        public override IObservable<byte[]> Process(IObservable<Message> source)
+        // Actonly as server listener
+        public override IObservable<byte[]> Generate()
         {
-            return Observable.Using(() =>
+            return Generate(null);
+        }
+
+        // Acts as both server listener and message sender
+        public IObservable<byte[]> Generate(IObservable<Message> message)
+        {
+            return Observable.Create<byte[]>((observer, cancellationToken) =>
             {
                 var dealer = new DealerSocket();
                 dealer.Connect($"tcp://{Host}:{Port}");
-                return dealer; // "client"
-            },
-            dealer => source.Select(
-                message =>
+                cancellationToken.Register(() => { dealer.Dispose(); });
+
+                if (message != null)
                 {
-                    dealer.SendMoreFrameEmpty().SendFrame(message.Buffer.Array);
+                    var sender = message.Do(m =>
+                    {
+                        dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
+                    }).Subscribe();
 
-                    var serverMessage = dealer.ReceiveMultipartMessage();
+                    cancellationToken.Register(() => { sender.Dispose(); });
+                }
 
-                    return serverMessage[1].ToByteArray();
-
-                }).Finally(() => { dealer.Dispose(); })
-            ); ;
+                return Task.Factory.StartNew(() =>
+                {
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        var messageFromServer = dealer.ReceiveMultipartMessage();
+                        observer.OnNext(messageFromServer[1].ToByteArray());
+                    }
+                });
+            });
         }
     }
 }

@@ -7,47 +7,57 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Router : Combinator<Message, Router.IncomingMessage>
+    public class Router : Source<Router.ClientMessage>
     {
         public string Host { get; set; }
         public string Port { get; set; }
 
-        public override IObservable<IncomingMessage> Process(IObservable<Message> source)
+        // Act only as client listener
+        public override IObservable<ClientMessage> Generate()
         {
-            return Observable.Using(() =>
+            return Generate(null);
+        }
+
+        // Act as both client listener and message sender
+        public IObservable<ClientMessage> Generate(IObservable<Tuple<byte[], Message>> message)
+        {
+            return Observable.Create<ClientMessage>((observer, cancellationToken) =>
             {
                 var router = new RouterSocket();
                 router.Bind($"tcp://{Host}:{Port}");
-                return router; // "server"
-            },
-            router => source.Select(
-                message =>
+                cancellationToken.Register(() => { router.Dispose(); });
+
+                if (message != null)
                 {
-                    var clientMessage = router.ReceiveMultipartMessage(); // This method doesn't really work. We only try and receive a message when our source emits. Actully we want to listen for clients and then send messages back to clients when we get a message. On the other hand, what would we send back if the server has nothing to emit?
-                    uint clientAddress = (uint)clientMessage[0].ConvertToInt32();
-                    var messagePayload = clientMessage[2].ToByteArray(); // Index as two as 2nd message entry is empty delimiter
+                    var sender = message.Do(m =>
+                    {
+                        var messageToClient = new NetMQMessage();
+                        messageToClient.Append(m.Item1);
+                        messageToClient.AppendEmptyFrame();
+                        messageToClient.Append(m.Item2.Buffer.Array);
+                        router.SendMultipartMessage(messageToClient);
+                    }).Subscribe();
 
-                    var messageToClient = new NetMQMessage();
-                    messageToClient.Append(clientMessage[0].ToByteArray());
-                    messageToClient.AppendEmptyFrame();
-                    messageToClient.Append(message.Buffer.Array);
-                    router.SendMultipartMessage(messageToClient);
+                    cancellationToken.Register(() => sender.Dispose());
+                }
 
-                    return new IncomingMessage(clientAddress, messagePayload);
-                })
-            );
+                return Task.Factory.StartNew(() => {
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        var messageFromClient = router.ReceiveMultipartMessage();
+                        byte[] clientAddress = messageFromClient[0].ToByteArray();
+                        byte[] messagePayload = messageFromClient[2].ToByteArray();
+                        
+                        observer.OnNext(new ClientMessage { ClientAddress = clientAddress, MessagePayload = messagePayload });
+                    }
+                });
+            });
         }
 
-        public struct IncomingMessage
+        public struct ClientMessage
         {
-            public uint RoutingId;
+            public byte[] ClientAddress;
             public byte[] MessagePayload;
-
-            public IncomingMessage(uint routingId, byte[] messagePayload)
-            {
-                RoutingId = routingId;
-                MessagePayload = messagePayload;
-            }
         }
     }
 }
