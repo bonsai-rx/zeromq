@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using Bonsai.Osc;
 using NetMQ;
@@ -6,28 +7,16 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    // TODO doesn't work with multiple push sockets
     public class Push : Sink<Message>
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
-        public SocketSettings.SocketConnection SocketConnection { get; set; }
+        [TypeConverter(typeof(ConnectionIdConverter))]
+        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
 
         public override IObservable<Message> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
             {
-                var push = new PushSocket();
-
-                switch (SocketConnection)
-                {
-                    case SocketSettings.SocketConnection.Bind:
-                        push.Bind($"tcp://{Host}:{Port}"); break;
-                    case SocketSettings.SocketConnection.Connect:
-                    default:
-                        push.Connect($"tcp://{Host}:{Port}"); break;
-                }
-
+                var push = new PushSocket(ConnectionId.ToString());
                 return push;
             },
             push => source.Do(message => {

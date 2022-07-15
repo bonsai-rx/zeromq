@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Bonsai.Osc;
@@ -9,8 +10,8 @@ namespace Bonsai.ZeroMQ
 {
     public class Router : Source<ZeroMQMessage>
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
+        [TypeConverter(typeof(ConnectionIdConverter))]
+        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Bind, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
 
         // Act only as client listener
         public override IObservable<ZeroMQMessage> Generate()
@@ -23,8 +24,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
-                var router = new RouterSocket();
-                router.Bind($"tcp://{Host}:{Port}");
+                var router = new RouterSocket(ConnectionId.ToString());
                 cancellationToken.Register(() => { router.Dispose(); });
 
                 if (message != null)

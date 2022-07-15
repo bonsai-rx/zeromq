@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using Bonsai.Osc;
 using NetMQ;
@@ -8,26 +9,15 @@ namespace Bonsai.ZeroMQ
 {
     public class Publisher : Sink<Message>
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
+        [TypeConverter(typeof(ConnectionIdConverter))]
+        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
         public string Topic { get; set; }
-        public SocketSettings.SocketConnection SocketConnection { get; set; }
 
         public override IObservable<Message> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
             {
-                var pub = new PublisherSocket();
-
-                switch (SocketConnection)
-                {
-                    case SocketSettings.SocketConnection.Bind:
-                        pub.Bind($"tcp://{Host}:{Port}"); break;
-                    case SocketSettings.SocketConnection.Connect:
-                    default:
-                        pub.Connect($"tcp://{Host}:{Port}"); break;
-                }
-
+                var pub = new PublisherSocket(ConnectionId.ToString());
                 return pub;
             },
             pub => source.Do(message =>

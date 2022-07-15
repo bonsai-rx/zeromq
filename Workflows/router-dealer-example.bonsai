@@ -13,8 +13,12 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Router">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5557</p1:Port>
+          <p1:ConnectionId>
+            <p1:SocketConnection>Bind</p1:SocketConnection>
+            <p1:SocketProtocol>TCP</p1:SocketProtocol>
+            <p1:Host>localhost</p1:Host>
+            <p1:Port>5557</p1:Port>
+          </p1:ConnectionId>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
@@ -46,14 +50,20 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Dealer">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5557</p1:Port>
+          <p1:ConnectionId>
+            <p1:SocketConnection>Connect</p1:SocketConnection>
+            <p1:SocketProtocol>TCP</p1:SocketProtocol>
+            <p1:Host>localhost</p1:Host>
+            <p1:Port>5557</p1:Port>
+          </p1:ConnectionId>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
         <Selector>Message</Selector>
       </Expression>
-      <Expression xsi:type="osc:Parse" />
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>h</osc:TypeTag>
+      </Expression>
     </Nodes>
     <Edges>
       <Edge From="0" To="1" Label="Source1" />
