@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using NetMQ;
@@ -8,26 +9,15 @@ namespace Bonsai.ZeroMQ
 {
     public class Subscriber : Source<ZeroMQMessage>
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
+        [TypeConverter(typeof(ConnectionIdConverter))]
+        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
         public string Topic { get; set; }
-        public SocketSettings.SocketConnection SocketConnection { get; set; }
 
         public override IObservable<ZeroMQMessage> Generate()
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
-                var sub = new SubscriberSocket();
-
-                switch (SocketConnection)
-                {
-                    case SocketSettings.SocketConnection.Bind:
-                        sub.Bind($"tcp://{Host}:{Port}"); break;
-                    case SocketSettings.SocketConnection.Connect:
-                    default:
-                        sub.Connect($"tcp://{Host}:{Port}"); break;
-                }
-
+                var sub = new SubscriberSocket(ConnectionId.ToString());
                 sub.Subscribe(Topic);
 
                 return Task.Factory.StartNew(() =>
