@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Bonsai.Osc;
@@ -9,24 +10,14 @@ namespace Bonsai.ZeroMQ
 {
     public class Pull : Source<ZeroMQMessage>
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
-        public SocketSettings.SocketConnection SocketConnection { get; set; }
+        [TypeConverter(typeof(ConnectionIdConverter))]
+        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
 
         public override IObservable<ZeroMQMessage> Generate()
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
-                var pull = new PullSocket();
-
-                switch (SocketConnection)
-                {
-                    case SocketSettings.SocketConnection.Bind:
-                        pull.Bind($"tcp://{Host}:{Port}"); break;
-                    case SocketSettings.SocketConnection.Connect:
-                    default:
-                        pull.Connect($"tcp://{Host}:{Port}"); break;
-                }
+                var pull = new PullSocket(ConnectionId.ToString());
 
                 return Task.Factory.StartNew(() =>
                 {
