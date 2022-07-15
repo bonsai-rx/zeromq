@@ -7,23 +7,23 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
-    public class Publisher : Sink<Message>
+    public class Push : Sink<Message>
     {
         [TypeConverter(typeof(ConnectionIdConverter))]
         public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
-        public string Topic { get; set; }
 
         public override IObservable<Message> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
             {
-                var pub = new PublisherSocket(ConnectionId.ToString());
-                return pub;
+                var push = new PushSocket(ConnectionId.ToString());
+                return push;
             },
-            pub => source.Do(message =>
-            {
-                pub.SendMoreFrame(Topic).SendFrame(message.Buffer.Array);
-            }).Finally(() => { pub.Dispose(); }));
+            push => source.Do(message => {
+                push.TrySendFrame(message.Buffer.Array);
+            }).Finally(() => { push.Dispose(); })); 
         }
     }
+
+
 }
