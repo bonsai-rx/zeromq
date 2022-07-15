@@ -18,8 +18,12 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Request">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>50020</p1:Port>
+          <p1:ConnectionId>
+            <p1:SocketConnection>Bind</p1:SocketConnection>
+            <p1:SocketProtocol>TCP</p1:SocketProtocol>
+            <p1:Host>localhost</p1:Host>
+            <p1:Port>5557</p1:Port>
+          </p1:ConnectionId>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
@@ -44,8 +48,12 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Response">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>50020</p1:Port>
+          <p1:ConnectionId>
+            <p1:SocketConnection>Connect</p1:SocketConnection>
+            <p1:SocketProtocol>TCP</p1:SocketProtocol>
+            <p1:Host>localhost</p1:Host>
+            <p1:Port>5557</p1:Port>
+          </p1:ConnectionId>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">

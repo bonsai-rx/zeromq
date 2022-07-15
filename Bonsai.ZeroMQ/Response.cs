@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Bonsai.Osc;
@@ -9,14 +10,14 @@ namespace Bonsai.ZeroMQ
 {
     public class Response : Combinator<Message, ZeroMQMessage>
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
+        [TypeConverter(typeof(ConnectionIdConverter))]
+        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
 
         public override IObservable<ZeroMQMessage> Process(IObservable<Message> source)
         {
             return Observable.Using(() =>
             {
-                var response = new ResponseSocket($"tcp://{Host}:{Port}");
+                var response = new ResponseSocket(ConnectionId.ToString());
                 return response;
             },
             response => source.Select(
