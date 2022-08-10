@@ -1,0 +1,403 @@
+### YamlMime:ManagedReference
+items:
+- uid: Bonsai.ZeroMQ.MessageType
+  commentId: T:Bonsai.ZeroMQ.MessageType
+  id: MessageType
+  parent: Bonsai.ZeroMQ
+  children:
+  - Bonsai.ZeroMQ.MessageType.Dealer
+  - Bonsai.ZeroMQ.MessageType.Publish
+  - Bonsai.ZeroMQ.MessageType.Pull
+  - Bonsai.ZeroMQ.MessageType.Push
+  - Bonsai.ZeroMQ.MessageType.Request
+  - Bonsai.ZeroMQ.MessageType.Response
+  - Bonsai.ZeroMQ.MessageType.Router
+  - Bonsai.ZeroMQ.MessageType.Subscribe
+  - Bonsai.ZeroMQ.MessageType.Undefined
+  langs:
+  - csharp
+  - vb
+  name: MessageType
+  nameWithType: MessageType
+  fullName: Bonsai.ZeroMQ.MessageType
+  type: Enum
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: MessageType
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 32
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nThe socket type where this message was generated or received.\n"
+  example: []
+  syntax:
+    content: public enum MessageType
+    content.vb: Public Enum MessageType
+  modifiers.csharp:
+  - public
+  - enum
+  modifiers.vb:
+  - Public
+  - Enum
+- uid: Bonsai.ZeroMQ.MessageType.Dealer
+  commentId: F:Bonsai.ZeroMQ.MessageType.Dealer
+  id: Dealer
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Dealer
+  nameWithType: MessageType.Dealer
+  fullName: Bonsai.ZeroMQ.MessageType.Dealer
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Dealer
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 37
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Dealer\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Dealer = 0
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Router
+  commentId: F:Bonsai.ZeroMQ.MessageType.Router
+  id: Router
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Router
+  nameWithType: MessageType.Router
+  fullName: Bonsai.ZeroMQ.MessageType.Router
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Router
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 42
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Router\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Router = 1
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Push
+  commentId: F:Bonsai.ZeroMQ.MessageType.Push
+  id: Push
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Push
+  nameWithType: MessageType.Push
+  fullName: Bonsai.ZeroMQ.MessageType.Push
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Push
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 47
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Push\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Push = 2
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Pull
+  commentId: F:Bonsai.ZeroMQ.MessageType.Pull
+  id: Pull
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Pull
+  nameWithType: MessageType.Pull
+  fullName: Bonsai.ZeroMQ.MessageType.Pull
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Pull
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 52
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Pull\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Pull = 3
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Request
+  commentId: F:Bonsai.ZeroMQ.MessageType.Request
+  id: Request
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Request
+  nameWithType: MessageType.Request
+  fullName: Bonsai.ZeroMQ.MessageType.Request
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Request
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 57
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Request\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Request = 4
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Response
+  commentId: F:Bonsai.ZeroMQ.MessageType.Response
+  id: Response
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Response
+  nameWithType: MessageType.Response
+  fullName: Bonsai.ZeroMQ.MessageType.Response
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Response
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 62
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Response\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Response = 5
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Publish
+  commentId: F:Bonsai.ZeroMQ.MessageType.Publish
+  id: Publish
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Publish
+  nameWithType: MessageType.Publish
+  fullName: Bonsai.ZeroMQ.MessageType.Publish
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Publish
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 67
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Publisher\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Publish = 6
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Subscribe
+  commentId: F:Bonsai.ZeroMQ.MessageType.Subscribe
+  id: Subscribe
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Subscribe
+  nameWithType: MessageType.Subscribe
+  fullName: Bonsai.ZeroMQ.MessageType.Subscribe
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Subscribe
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 72
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nMessage originated at a <xref href=\"Bonsai.ZeroMQ.Subscriber\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: Subscribe = 7
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.MessageType.Undefined
+  commentId: F:Bonsai.ZeroMQ.MessageType.Undefined
+  id: Undefined
+  parent: Bonsai.ZeroMQ.MessageType
+  langs:
+  - csharp
+  - vb
+  name: Undefined
+  nameWithType: MessageType.Undefined
+  fullName: Bonsai.ZeroMQ.MessageType.Undefined
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Undefined
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 77
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nThe origin of this message is undefined.\n"
+  example: []
+  syntax:
+    content: Undefined = 8
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+references:
+- uid: Bonsai.ZeroMQ
+  commentId: N:Bonsai.ZeroMQ
+  name: Bonsai.ZeroMQ
+  nameWithType: Bonsai.ZeroMQ
+  fullName: Bonsai.ZeroMQ
+- uid: Bonsai.ZeroMQ.Dealer
+  commentId: T:Bonsai.ZeroMQ.Dealer
+  name: Dealer
+  nameWithType: Dealer
+  fullName: Bonsai.ZeroMQ.Dealer
+- uid: Bonsai.ZeroMQ.MessageType
+  commentId: T:Bonsai.ZeroMQ.MessageType
+  parent: Bonsai.ZeroMQ
+  name: MessageType
+  nameWithType: MessageType
+  fullName: Bonsai.ZeroMQ.MessageType
+- uid: Bonsai.ZeroMQ.Router
+  commentId: T:Bonsai.ZeroMQ.Router
+  name: Router
+  nameWithType: Router
+  fullName: Bonsai.ZeroMQ.Router
+- uid: Bonsai.ZeroMQ.Push
+  commentId: T:Bonsai.ZeroMQ.Push
+  name: Push
+  nameWithType: Push
+  fullName: Bonsai.ZeroMQ.Push
+- uid: Bonsai.ZeroMQ.Pull
+  commentId: T:Bonsai.ZeroMQ.Pull
+  name: Pull
+  nameWithType: Pull
+  fullName: Bonsai.ZeroMQ.Pull
+- uid: Bonsai.ZeroMQ.Request
+  commentId: T:Bonsai.ZeroMQ.Request
+  name: Request
+  nameWithType: Request
+  fullName: Bonsai.ZeroMQ.Request
+- uid: Bonsai.ZeroMQ.Response
+  commentId: T:Bonsai.ZeroMQ.Response
+  name: Response
+  nameWithType: Response
+  fullName: Bonsai.ZeroMQ.Response
+- uid: Bonsai.ZeroMQ.Publisher
+  commentId: T:Bonsai.ZeroMQ.Publisher
+  name: Publisher
+  nameWithType: Publisher
+  fullName: Bonsai.ZeroMQ.Publisher
+- uid: Bonsai.ZeroMQ.Subscriber
+  commentId: T:Bonsai.ZeroMQ.Subscriber
+  name: Subscriber
+  nameWithType: Subscriber
+  fullName: Bonsai.ZeroMQ.Subscriber

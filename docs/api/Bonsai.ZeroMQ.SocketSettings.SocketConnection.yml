@@ -1,0 +1,118 @@
+### YamlMime:ManagedReference
+items:
+- uid: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  commentId: T:Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  id: SocketSettings.SocketConnection
+  parent: Bonsai.ZeroMQ
+  children:
+  - Bonsai.ZeroMQ.SocketSettings.SocketConnection.Bind
+  - Bonsai.ZeroMQ.SocketSettings.SocketConnection.Connect
+  langs:
+  - csharp
+  - vb
+  name: SocketSettings.SocketConnection
+  nameWithType: SocketSettings.SocketConnection
+  fullName: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  type: Enum
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/SocketSettings.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: SocketConnection
+    path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
+    startLine: 16
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nSpecifies a socket&apos;s connection type.\n"
+  example: []
+  syntax:
+    content: public enum SocketConnection
+    content.vb: Public Enum SocketConnection
+  modifiers.csharp:
+  - public
+  - enum
+  modifiers.vb:
+  - Public
+  - Enum
+- uid: Bonsai.ZeroMQ.SocketSettings.SocketConnection.Connect
+  commentId: F:Bonsai.ZeroMQ.SocketSettings.SocketConnection.Connect
+  id: Connect
+  parent: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  langs:
+  - csharp
+  - vb
+  name: Connect
+  nameWithType: SocketSettings.SocketConnection.Connect
+  fullName: Bonsai.ZeroMQ.SocketSettings.SocketConnection.Connect
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/SocketSettings.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Connect
+    path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
+    startLine: 20
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nSpecifies a socket that will connect.\n"
+  example: []
+  syntax:
+    content: Connect = 0
+    return:
+      type: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Bonsai.ZeroMQ.SocketSettings.SocketConnection.Bind
+  commentId: F:Bonsai.ZeroMQ.SocketSettings.SocketConnection.Bind
+  id: Bind
+  parent: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  langs:
+  - csharp
+  - vb
+  name: Bind
+  nameWithType: SocketSettings.SocketConnection.Bind
+  fullName: Bonsai.ZeroMQ.SocketSettings.SocketConnection.Bind
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/SocketSettings.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Bind
+    path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
+    startLine: 25
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nSpecifies a socket that will bind.\n"
+  example: []
+  syntax:
+    content: Bind = 1
+    return:
+      type: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+references:
+- uid: Bonsai.ZeroMQ
+  commentId: N:Bonsai.ZeroMQ
+  name: Bonsai.ZeroMQ
+  nameWithType: Bonsai.ZeroMQ
+  fullName: Bonsai.ZeroMQ
+- uid: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  commentId: T:Bonsai.ZeroMQ.SocketSettings.SocketConnection
+  parent: Bonsai.ZeroMQ
+  name: SocketSettings.SocketConnection
+  nameWithType: SocketSettings.SocketConnection
+  fullName: Bonsai.ZeroMQ.SocketSettings.SocketConnection
