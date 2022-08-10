@@ -23,7 +23,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: SocketSettings
     path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
-    startLine: 11
+    startLine: 7
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -67,7 +67,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: CharAsSocketConnection
     path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
-    startLine: 57
+    startLine: 53
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -108,7 +108,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: StringAsSocketProtocol
     path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
-    startLine: 79
+    startLine: 75
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -149,7 +149,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: ConnectionString
     path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
-    startLine: 103
+    startLine: 99
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -190,7 +190,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: ProtocolString
     path: ../src/Bonsai.ZeroMQ/SocketSettings.cs
-    startLine: 124
+    startLine: 120
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ

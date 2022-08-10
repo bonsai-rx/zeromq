@@ -21,7 +21,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: Response
     path: ../src/Bonsai.ZeroMQ/Response.cs
-    startLine: 13
+    startLine: 12
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -68,7 +68,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: ConnectionId
     path: ../src/Bonsai.ZeroMQ/Response.cs
-    startLine: 18
+    startLine: 17
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -111,7 +111,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: Process
     path: ../src/Bonsai.ZeroMQ/Response.cs
-    startLine: 30
+    startLine: 29
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ

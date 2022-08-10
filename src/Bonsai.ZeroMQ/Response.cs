@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Bonsai.Osc;
 using NetMQ;

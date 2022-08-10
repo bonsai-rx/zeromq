@@ -27,7 +27,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: ConnectionId
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 11
+    startLine: 5
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -69,7 +69,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: SocketConnection
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 16
+    startLine: 10
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -106,7 +106,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: SocketProtocol
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 20
+    startLine: 14
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -143,7 +143,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: Host
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 24
+    startLine: 18
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -180,7 +180,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: Port
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 28
+    startLine: 22
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -217,7 +217,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: .ctor
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 33
+    startLine: 27
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -249,7 +249,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: .ctor
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 45
+    startLine: 39
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -294,7 +294,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: .ctor
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 57
+    startLine: 51
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -305,7 +305,7 @@ items:
     parameters:
     - id: connectionString
       type: System.String
-      description: The address string in the form &quot;{socketType}{socketProtocol}://{host}:{port}&quot;, e.g. @tcp://localhost:5557.
+      description: The address string in the form &quot;{socketType}{socketProtocol}://{host}:{port}&quot;, e.g. &quot;@tcp://localhost:5557&quot;.
     content.vb: Public Sub New(connectionString As String)
   overload: Bonsai.ZeroMQ.ConnectionId.#ctor*
   modifiers.csharp:
@@ -330,7 +330,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: ToString
     path: ../src/Bonsai.ZeroMQ/ConnectionId.cs
-    startLine: 71
+    startLine: 65
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ

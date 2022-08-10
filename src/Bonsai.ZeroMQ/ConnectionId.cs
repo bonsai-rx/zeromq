@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Bonsai.ZeroMQ
+﻿namespace Bonsai.ZeroMQ
 {
     /// <summary>
     /// Represents a connection identity for a ZeroMQ socket including the socket type, protocol and address.

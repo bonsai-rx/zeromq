@@ -22,7 +22,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: ZeroMQMessage
     path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
-    startLine: 11
+    startLine: 5
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -65,7 +65,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: Address
     path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
-    startLine: 16
+    startLine: 10
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -98,7 +98,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: Message
     path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
-    startLine: 21
+    startLine: 15
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
@@ -131,7 +131,7 @@ items:
       repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
     id: MessageType
     path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
-    startLine: 26
+    startLine: 20
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
