@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Bonsai.ZeroMQ
 {
-    class ConnectionIdConverter : TypeConverter
+    internal class ConnectionIdConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
