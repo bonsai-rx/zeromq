@@ -7,12 +7,28 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
+    /// <summary>
+    /// Represents an operator that creates a Subscriber socket and listens for messages.
+    /// </summary>
     public class Subscriber : Source<ZeroMQMessage>
     {
+        /// <summary>
+        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Subscriber"/> socket.
+        /// </summary>
         [TypeConverter(typeof(ConnectionIdConverter))]
         public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
+
+        /// <summary>
+        /// Gets or sets a value specifying the topic that the socket will subscribe to.
+        /// </summary>
         public string Topic { get; set; }
 
+        /// <summary>
+        /// Creates a subscriber socket with the specified <see cref="ZeroMQ.ConnectionId"/>.
+        /// </summary>
+        /// <returns>
+        /// A sequence of <see cref="ZeroMQMessage"/> representing received messages from the subscriber socket.
+        /// </returns>
         public override IObservable<ZeroMQMessage> Generate()
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
