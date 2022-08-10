@@ -6,6 +6,7 @@
     <Authors></Authors>
     <Copyright>Copyright ©  2022</Copyright>
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageProjectUrl></PackageProjectUrl>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageIcon></PackageIcon>
