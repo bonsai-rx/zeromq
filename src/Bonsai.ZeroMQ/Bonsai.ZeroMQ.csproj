@@ -10,7 +10,7 @@
     <PackageProjectUrl></PackageProjectUrl>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageIcon></PackageIcon>
-    <PackageOutputPath></PackageOutputPath>
+    <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
     <PackageTags>Bonsai Rx Bonsai.ZeroMQ</PackageTags>
     <TargetFramework>net472</TargetFramework>
     <Features>strict</Features>
