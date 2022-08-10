@@ -36,7 +36,11 @@ namespace Bonsai.ZeroMQ
             },
             push => source.Select(message => {
                 push.TrySendFrame(message.Buffer.Array);
-                return new ZeroMQMessage { Address = null, Message = message.Buffer.Array, MessageType = MessageType.Push };
+                return new ZeroMQMessage { 
+                    Address = null, 
+                    Message = message.Buffer.Array, 
+                    MessageType = MessageType.Push 
+                };
             }).Finally(() => { push.Dispose(); }));
         }
     }
