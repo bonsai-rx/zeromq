@@ -9,7 +9,7 @@ using NetMQ.Sockets;
 namespace Bonsai.ZeroMQ
 {
     /// <summary>
-    /// Represents an operator that creates a dealer socket to act as either server listener or both server listener and sender of sequences of <see cref="Message"/>.
+    /// Represents an operator that creates a Dealer socket to act as either server listener or both server listener and sender of sequences of <see cref="Message"/>.
     /// </summary>
     public class Dealer : Source<ZeroMQMessage>
     {

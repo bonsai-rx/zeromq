@@ -27,7 +27,7 @@ namespace Bonsai.ZeroMQ
         /// Creates a publisher socket with the specified <see cref="ZeroMQ.ConnectionId"/>
         /// </summary>
         /// <param name="source">
-        /// A <see cref="Message"/> sequence to be sent by the socket
+        /// A <see cref="Message"/> sequence to be sent by the socket.
         /// </param>
         /// <returns>
         /// A <see cref="ZeroMQMessage"/> sequence representing messages sent by the socket.
