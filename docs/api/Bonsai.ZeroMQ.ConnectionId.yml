@@ -298,14 +298,14 @@ items:
   assemblies:
   - Bonsai.ZeroMQ
   namespace: Bonsai.ZeroMQ
-  summary: "\nInitializes a new instance of the <xref href=\"Bonsai.ZeroMQ.ConnectionId\" data-throw-if-not-resolved=\"false\"></xref> class from an address string in the form &quot;{socketType}{socketProtocol}://{host}:{port}&quot;, e.g. @tcp://localhost:5557.\n"
+  summary: "\nInitializes a new instance of the <xref href=\"Bonsai.ZeroMQ.ConnectionId\" data-throw-if-not-resolved=\"false\"></xref> class from an address string.\n"
   example: []
   syntax:
     content: public ConnectionId(string connectionString)
     parameters:
     - id: connectionString
       type: System.String
-      description: ''
+      description: The address string in the form &quot;{socketType}{socketProtocol}://{host}:{port}&quot;, e.g. @tcp://localhost:5557.
     content.vb: Public Sub New(connectionString As String)
   overload: Bonsai.ZeroMQ.ConnectionId.#ctor*
   modifiers.csharp:

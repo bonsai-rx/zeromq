@@ -52,9 +52,9 @@ namespace Bonsai.ZeroMQ
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConnectionId"/> class from an address string in the form "{socketType}{socketProtocol}://{host}:{port}", e.g. @tcp://localhost:5557.
+        /// Initializes a new instance of the <see cref="ConnectionId"/> class from an address string.
         /// </summary>
-        /// <param name="connectionString"></param>
+        /// <param name="connectionString">The address string in the form "{socketType}{socketProtocol}://{host}:{port}", e.g. "@tcp://localhost:5557".</param>
         public ConnectionId(string connectionString)
         {
             string port = connectionString.Split(':')[2];
