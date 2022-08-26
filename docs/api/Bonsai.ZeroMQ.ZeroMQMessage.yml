@@ -1,0 +1,478 @@
+### YamlMime:ManagedReference
+items:
+- uid: Bonsai.ZeroMQ.ZeroMQMessage
+  commentId: T:Bonsai.ZeroMQ.ZeroMQMessage
+  id: ZeroMQMessage
+  parent: Bonsai.ZeroMQ
+  children:
+  - Bonsai.ZeroMQ.ZeroMQMessage.Address
+  - Bonsai.ZeroMQ.ZeroMQMessage.Message
+  - Bonsai.ZeroMQ.ZeroMQMessage.MessageType
+  langs:
+  - csharp
+  - vb
+  name: ZeroMQMessage
+  nameWithType: ZeroMQMessage
+  fullName: Bonsai.ZeroMQ.ZeroMQMessage
+  type: Class
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: ZeroMQMessage
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 5
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nRepresents a message received or sent by a <xref href=\"Bonsai.ZeroMQ\" data-throw-if-not-resolved=\"false\"></xref> socket.\n"
+  example: []
+  syntax:
+    content: public class ZeroMQMessage
+    content.vb: Public Class ZeroMQMessage
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.ToString
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Bonsai.ZeroMQ.ZeroMQMessage.Address
+  commentId: F:Bonsai.ZeroMQ.ZeroMQMessage.Address
+  id: Address
+  parent: Bonsai.ZeroMQ.ZeroMQMessage
+  langs:
+  - csharp
+  - vb
+  name: Address
+  nameWithType: ZeroMQMessage.Address
+  fullName: Bonsai.ZeroMQ.ZeroMQMessage.Address
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Address
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 10
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nA routing address for the message, e.g. representing the ID of the client that sent it.\n"
+  example: []
+  syntax:
+    content: public byte[] Address
+    return:
+      type: System.Byte[]
+    content.vb: Public Address As Byte()
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Bonsai.ZeroMQ.ZeroMQMessage.Message
+  commentId: F:Bonsai.ZeroMQ.ZeroMQMessage.Message
+  id: Message
+  parent: Bonsai.ZeroMQ.ZeroMQMessage
+  langs:
+  - csharp
+  - vb
+  name: Message
+  nameWithType: ZeroMQMessage.Message
+  fullName: Bonsai.ZeroMQ.ZeroMQMessage.Message
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: Message
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 15
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nThe message data.\n"
+  example: []
+  syntax:
+    content: public byte[] Message
+    return:
+      type: System.Byte[]
+    content.vb: Public Message As Byte()
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Bonsai.ZeroMQ.ZeroMQMessage.MessageType
+  commentId: F:Bonsai.ZeroMQ.ZeroMQMessage.MessageType
+  id: MessageType
+  parent: Bonsai.ZeroMQ.ZeroMQMessage
+  langs:
+  - csharp
+  - vb
+  name: MessageType
+  nameWithType: ZeroMQMessage.MessageType
+  fullName: Bonsai.ZeroMQ.ZeroMQMessage.MessageType
+  type: Field
+  source:
+    remote:
+      path: src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+      branch: issue-1-docs
+      repo: https://github.com/RoboDoig/Bonsai.ZeroMQ.git
+    id: MessageType
+    path: ../src/Bonsai.ZeroMQ/ZeroMQMessage.cs
+    startLine: 20
+  assemblies:
+  - Bonsai.ZeroMQ
+  namespace: Bonsai.ZeroMQ
+  summary: "\nThe type of socket handling the message.\n"
+  example: []
+  syntax:
+    content: public MessageType MessageType
+    return:
+      type: Bonsai.ZeroMQ.MessageType
+    content.vb: Public MessageType As MessageType
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Bonsai.ZeroMQ
+  commentId: N:Bonsai.ZeroMQ
+  name: Bonsai.ZeroMQ
+  nameWithType: Bonsai.ZeroMQ
+  fullName: Bonsai.ZeroMQ
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  name: ToString()
+  nameWithType: Object.ToString()
+  fullName: System.Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    nameWithType: Object.ToString
+    fullName: System.Object.ToString
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    nameWithType: Object.ToString
+    fullName: System.Object.ToString
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  name: Equals(Object)
+  nameWithType: Object.Equals(Object)
+  fullName: System.Object.Equals(System.Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    nameWithType: Object.Equals
+    fullName: System.Object.Equals
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    nameWithType: Object.Equals
+    fullName: System.Object.Equals
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  name: Equals(Object, Object)
+  nameWithType: Object.Equals(Object, Object)
+  fullName: System.Object.Equals(System.Object, System.Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    nameWithType: Object.Equals
+    fullName: System.Object.Equals
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    nameWithType: Object.Equals
+    fullName: System.Object.Equals
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  name: ReferenceEquals(Object, Object)
+  nameWithType: Object.ReferenceEquals(Object, Object)
+  fullName: System.Object.ReferenceEquals(System.Object, System.Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    nameWithType: Object.ReferenceEquals
+    fullName: System.Object.ReferenceEquals
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    nameWithType: Object.ReferenceEquals
+    fullName: System.Object.ReferenceEquals
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - uid: System.Object
+    name: Object
+    nameWithType: Object
+    fullName: System.Object
+    isExternal: true
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  name: GetHashCode()
+  nameWithType: Object.GetHashCode()
+  fullName: System.Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    nameWithType: Object.GetHashCode
+    fullName: System.Object.GetHashCode
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    nameWithType: Object.GetHashCode
+    fullName: System.Object.GetHashCode
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  name: GetType()
+  nameWithType: Object.GetType()
+  fullName: System.Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    nameWithType: Object.GetType
+    fullName: System.Object.GetType
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    nameWithType: Object.GetType
+    fullName: System.Object.GetType
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  name: MemberwiseClone()
+  nameWithType: Object.MemberwiseClone()
+  fullName: System.Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    nameWithType: Object.MemberwiseClone
+    fullName: System.Object.MemberwiseClone
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    nameWithType: Object.MemberwiseClone
+    fullName: System.Object.MemberwiseClone
+    isExternal: true
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Byte[]
+  isExternal: true
+  name: Byte[]
+  nameWithType: Byte[]
+  fullName: System.Byte[]
+  nameWithType.vb: Byte()
+  fullName.vb: System.Byte()
+  name.vb: Byte()
+  spec.csharp:
+  - uid: System.Byte
+    name: Byte
+    nameWithType: Byte
+    fullName: System.Byte
+    isExternal: true
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+  spec.vb:
+  - uid: System.Byte
+    name: Byte
+    nameWithType: Byte
+    fullName: System.Byte
+    isExternal: true
+  - name: ()
+    nameWithType: ()
+    fullName: ()
+- uid: Bonsai.ZeroMQ.MessageType
+  commentId: T:Bonsai.ZeroMQ.MessageType
+  parent: Bonsai.ZeroMQ
+  name: MessageType
+  nameWithType: MessageType
+  fullName: Bonsai.ZeroMQ.MessageType

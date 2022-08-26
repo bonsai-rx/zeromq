@@ -1,0 +1,32 @@
+### YamlMime:TableOfContent
+- uid: Bonsai.ZeroMQ
+  name: Bonsai.ZeroMQ
+  items:
+  - uid: Bonsai.ZeroMQ.ConnectionId
+    name: ConnectionId
+  - uid: Bonsai.ZeroMQ.Dealer
+    name: Dealer
+  - uid: Bonsai.ZeroMQ.MessageType
+    name: MessageType
+  - uid: Bonsai.ZeroMQ.Publisher
+    name: Publisher
+  - uid: Bonsai.ZeroMQ.Pull
+    name: Pull
+  - uid: Bonsai.ZeroMQ.Push
+    name: Push
+  - uid: Bonsai.ZeroMQ.Request
+    name: Request
+  - uid: Bonsai.ZeroMQ.Response
+    name: Response
+  - uid: Bonsai.ZeroMQ.Router
+    name: Router
+  - uid: Bonsai.ZeroMQ.SocketSettings
+    name: SocketSettings
+  - uid: Bonsai.ZeroMQ.SocketSettings.SocketConnection
+    name: SocketSettings.SocketConnection
+  - uid: Bonsai.ZeroMQ.SocketSettings.SocketProtocol
+    name: SocketSettings.SocketProtocol
+  - uid: Bonsai.ZeroMQ.Subscriber
+    name: Subscriber
+  - uid: Bonsai.ZeroMQ.ZeroMQMessage
+    name: ZeroMQMessage
