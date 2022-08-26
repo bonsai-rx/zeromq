@@ -1,31 +1,111 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WorkflowBuilder Version="2.6.3"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
                  xmlns:osc="clr-namespace:Bonsai.Osc;assembly=Bonsai.Osc"
                  xmlns:p1="clr-namespace:Bonsai.ZeroMQ;assembly=Bonsai.ZeroMQ"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:wie="clr-namespace:Bonsai.Windows.Input;assembly=Bonsai.Windows.Input"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
+      <Expression xsi:type="BehaviorSubject" TypeArguments="sys:Tuple(sys:Byte[],osc:Message)">
+        <Name>ClientMessage</Name>
+      </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="rx:Timer">
-          <rx:DueTime>PT0S</rx:DueTime>
-          <rx:Period>PT1S</rx:Period>
+        <Combinator xsi:type="p1:Router">
+          <p1:ConnectionId>
+            <p1:SocketConnection>Bind</p1:SocketConnection>
+            <p1:SocketProtocol>TCP</p1:SocketProtocol>
+            <p1:Host>localhost</p1:Host>
+            <p1:Port>5557</p1:Port>
+          </p1:ConnectionId>
         </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Address</Selector>
+      </Expression>
+      <Expression xsi:type="Index">
+        <Operand xsi:type="IntProperty">
+          <Value>1</Value>
+        </Operand>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="rx:DistinctBy">
+        <rx:KeySelector>Item1</rx:KeySelector>
+      </Expression>
+      <Expression xsi:type="ReplaySubject">
+        <Name>Clients</Name>
+        <BufferSize xsi:nil="true" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Skip">
+          <rx:Count>1</rx:Count>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="PublishSubject">
+        <Name>NextMessage</Name>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Message</Selector>
+      </Expression>
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>s</osc:TypeTag>
       </Expression>
       <Expression xsi:type="osc:Format">
         <osc:Address>/</osc:Address>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:Router">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5557</p1:Port>
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Item2</Selector>
+      </Expression>
+      <Expression xsi:type="SelectMany">
+        <Name>SelectAllClients</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="WorkflowInput">
+              <Name>Source1</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Clients</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>NextMessage</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:TakeUntil" />
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="1" To="3" Label="Source1" />
+            <Edge From="2" To="3" Label="Source2" />
+            <Edge From="3" To="4" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Item2</Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:WithLatestFrom" />
+      </Expression>
+      <Expression xsi:type="MulticastSubject">
+        <Name>ClientMessage</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="wie:KeyDown">
+          <wie:Filter>D1</wie:Filter>
+          <wie:SuppressRepetitions>false</wie:SuppressRepetitions>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="rx:Timer">
-          <rx:DueTime>PT0S</rx:DueTime>
-          <rx:Period>PT5S</rx:Period>
+        <Combinator xsi:type="StringProperty">
+          <Value>Client1</Value>
         </Combinator>
       </Expression>
       <Expression xsi:type="osc:Format">
@@ -33,20 +113,174 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Dealer">
-          <p1:Host>localhost</p1:Host>
-          <p1:Port>5557</p1:Port>
+          <p1:ConnectionId>
+            <p1:SocketConnection>Connect</p1:SocketConnection>
+            <p1:SocketProtocol>TCP</p1:SocketProtocol>
+            <p1:Host>localhost</p1:Host>
+            <p1:Port>5557</p1:Port>
+          </p1:ConnectionId>
         </Combinator>
       </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Message</Selector>
+      </Expression>
       <Expression xsi:type="osc:Parse">
-        <osc:TypeTag>h</osc:TypeTag>
+        <osc:TypeTag>s</osc:TypeTag>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="wie:KeyDown">
+          <wie:Filter>D2</wie:Filter>
+          <wie:SuppressRepetitions>false</wie:SuppressRepetitions>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="StringProperty">
+          <Value>Client2</Value>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="osc:Format">
+        <osc:Address>/</osc:Address>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Dealer">
+          <p1:ConnectionId>
+            <p1:SocketConnection>Connect</p1:SocketConnection>
+            <p1:SocketProtocol>TCP</p1:SocketProtocol>
+            <p1:Host>localhost</p1:Host>
+            <p1:Port>5557</p1:Port>
+          </p1:ConnectionId>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Message</Selector>
+      </Expression>
+      <Expression xsi:type="osc:Parse">
+        <osc:TypeTag>s</osc:TypeTag>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="rx:Timer">
+            <rx:DueTime>PT10S</rx:DueTime>
+            <rx:Period>PT5S</rx:Period>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="osc:Format">
+          <osc:Address>/</osc:Address>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="p1:Dealer">
+            <p1:ConnectionId>
+              <p1:SocketConnection>Connect</p1:SocketConnection>
+              <p1:SocketProtocol>TCP</p1:SocketProtocol>
+              <p1:Host>localhost</p1:Host>
+              <p1:Port>5557</p1:Port>
+            </p1:ConnectionId>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="MemberSelector">
+          <Selector>Message</Selector>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="osc:Parse">
+          <osc:TypeTag>h</osc:TypeTag>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="wie:KeyDown">
+            <wie:Filter>A</wie:Filter>
+            <wie:SuppressRepetitions>false</wie:SuppressRepetitions>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="SelectMany">
+          <Workflow>
+            <Nodes>
+              <Expression xsi:type="WorkflowInput">
+                <Name>Source1</Name>
+              </Expression>
+              <Expression xsi:type="SubscribeSubject">
+                <Name>Clients</Name>
+              </Expression>
+              <Expression xsi:type="Combinator">
+                <Combinator xsi:type="wie:KeyUp">
+                  <wie:Filter>A</wie:Filter>
+                </Combinator>
+              </Expression>
+              <Expression xsi:type="Combinator">
+                <Combinator xsi:type="rx:TakeUntil" />
+              </Expression>
+              <Expression xsi:type="WorkflowOutput" />
+            </Nodes>
+            <Edges>
+              <Edge From="1" To="3" Label="Source1" />
+              <Edge From="2" To="3" Label="Source2" />
+              <Edge From="3" To="4" Label="Source1" />
+            </Edges>
+          </Workflow>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="rx:Timer">
+            <rx:DueTime>PT0S</rx:DueTime>
+            <rx:Period>PT2S</rx:Period>
+          </Combinator>
+        </Builder>
+      </Expression>
+      <Expression xsi:type="Disable">
+        <Builder xsi:type="Combinator">
+          <Combinator xsi:type="rx:Timer">
+            <rx:DueTime>PT1S</rx:DueTime>
+            <rx:Period>PT2S</rx:Period>
+          </Combinator>
+        </Builder>
       </Expression>
     </Nodes>
     <Edges>
       <Edge From="0" To="1" Label="Source1" />
       <Edge From="1" To="2" Label="Source1" />
+      <Edge From="1" To="9" Label="Source1" />
+      <Edge From="2" To="12" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="2" To="4" Label="Source2" />
       <Edge From="3" To="4" Label="Source1" />
       <Edge From="4" To="5" Label="Source1" />
+      <Edge From="4" To="7" Label="Source1" />
       <Edge From="5" To="6" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="9" To="10" Label="Source1" />
+      <Edge From="10" To="11" Label="Source1" />
+      <Edge From="11" To="12" Label="Source2" />
+      <Edge From="12" To="13" Label="Source1" />
+      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="13" To="16" Label="Source2" />
+      <Edge From="14" To="15" Label="Source1" />
+      <Edge From="15" To="16" Label="Source1" />
+      <Edge From="16" To="17" Label="Source1" />
+      <Edge From="18" To="19" Label="Source1" />
+      <Edge From="19" To="20" Label="Source1" />
+      <Edge From="20" To="21" Label="Source1" />
+      <Edge From="21" To="22" Label="Source1" />
+      <Edge From="22" To="23" Label="Source1" />
+      <Edge From="24" To="25" Label="Source1" />
+      <Edge From="25" To="26" Label="Source1" />
+      <Edge From="26" To="27" Label="Source1" />
+      <Edge From="27" To="28" Label="Source1" />
+      <Edge From="28" To="29" Label="Source1" />
+      <Edge From="30" To="31" Label="Source1" />
+      <Edge From="31" To="32" Label="Source1" />
+      <Edge From="32" To="33" Label="Source1" />
+      <Edge From="33" To="34" Label="Source1" />
+      <Edge From="35" To="36" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
