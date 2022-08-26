@@ -8,18 +8,37 @@ using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
+    /// <summary>
+    /// Represents an operator that creates a Dealer socket to act as either client listener or both client listener and sender of sequence of <see cref="Message"/>.
+    /// </summary>
     public class Router : Source<ZeroMQMessage>
     {
+        /// <summary>
+        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Router"/> socket.
+        /// </summary>
         [TypeConverter(typeof(ConnectionIdConverter))]
         public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Bind, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
 
-        // Act only as client listener
+        /// <summary>
+        /// If no <see cref="Message"/> sequence is provided as source, creates a Router socket that acts only as a client listener.
+        /// </summary>
+        /// <returns>
+        /// A sequence of <see cref="ZeroMQMessage"/> representing messages received by the socket.
+        /// </returns>
         public override IObservable<ZeroMQMessage> Generate()
         {
             return Generate(null);
         }
 
-        // Act as both client listener and message sender
+        /// <summary>
+        /// If a <see cref="Message"/> sequence is provided as source, creates a Router socket that acts as both a client listener and sender of <see cref="Message"/>.
+        /// </summary>
+        /// <param name="message">
+        /// A <see cref="Message"/> sequence to be sent by the socket.
+        /// </param>
+        /// <returns>
+        /// A sequence of <see cref="ZeroMQMessage"/> representing messages received by the socket.
+        /// </returns>
         public IObservable<ZeroMQMessage> Generate(IObservable<Tuple<byte[], Message>> message)
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
