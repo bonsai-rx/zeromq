@@ -1,29 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Title>Bonsai.ZeroMQ</Title>
-    <Description>A package for the Bonsai visual programming language.</Description>
-    <Authors>NeuroGEARS</Authors>
-    <Copyright>Copyright ©  2022</Copyright>
-    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageProjectUrl></PackageProjectUrl>
-    <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageIcon></PackageIcon>
+    <Authors>Bonsai</Authors>
+    <Title>Bonsai - ZeroMQ Library</Title>
+    <Description>Bonsai Library containing interfaces for real-time asynchronous streaming of messages using ZeroMQ.</Description>
+    <Copyright>Copyright © Bonsai Foundation CIC 2022</Copyright>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <ProjectUrl>https://github.com/bonsai-rx/zeromq</ProjectUrl>
+    <PackageLicenseUrl>https://github.com/bonsai-rx/zeromq/blob/main/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://bonsai-rx.org/assets/images/bonsai.png</PackageIconUrl>
     <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
-    <PackageTags>Bonsai Rx Bonsai.ZeroMQ</PackageTags>
+    <PackageTags>Bonsai Rx ZeroMQ zmq Networking</PackageTags>
+    <IncludeSymbols Condition="'$(Configuration)'=='Release'">true</IncludeSymbols>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>net472</TargetFramework>
+    <LangVersion>8.0</LangVersion>
     <Features>strict</Features>
     <Version>0.1.0</Version>
-    <Company>NeuroGEARS</Company>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bonsai.Core" Version="2.6.3" />
-    <PackageReference Include="Bonsai.Osc" Version="2.6.2" />
-    <PackageReference Include="Bonsai.Vision" Version="2.6.1" />
+    <PackageReference Include="Bonsai.Core" Version="2.7.0" />
+    <PackageReference Include="Bonsai.Osc" Version="2.7.0" />
     <PackageReference Include="NetMQ" Version="4.0.1.8" />
-    <PackageReference Include="OpenCV.Net" Version="3.4.1" />
   </ItemGroup>
 
 </Project>
