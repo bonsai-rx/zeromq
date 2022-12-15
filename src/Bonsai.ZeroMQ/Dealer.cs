@@ -14,10 +14,10 @@ namespace Bonsai.ZeroMQ
     public class Dealer : Source<ZeroMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Dealer"/> socket.
+        /// Gets or sets a value specifying the connection string of the <see cref="Dealer"/> socket.
         /// </summary>
-        [TypeConverter(typeof(ConnectionIdConverter))]
-        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
+        [TypeConverter(typeof(ConnectionStringConverter))]
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// If no <see cref="Message"/> sequence is provided as source, creates a Dealer socket that acts only as a server listener.
@@ -43,7 +43,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
-                var dealer = new DealerSocket(ConnectionId.ToString());
+                var dealer = new DealerSocket(ConnectionString);
                 cancellationToken.Register(() => { dealer.Dispose(); });
 
                 if (message != null)

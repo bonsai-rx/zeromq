@@ -14,10 +14,10 @@ namespace Bonsai.ZeroMQ
     public class Router : Source<ZeroMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Router"/> socket.
+        /// Gets or sets a value specifying the connection string of the <see cref="Router"/> socket.
         /// </summary>
-        [TypeConverter(typeof(ConnectionIdConverter))]
-        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Bind, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
+        [TypeConverter(typeof(ConnectionStringConverter))]
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// If no <see cref="Message"/> sequence is provided as source, creates a Router socket that acts only as a client listener.
@@ -43,7 +43,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
-                var router = new RouterSocket(ConnectionId.ToString());
+                var router = new RouterSocket(ConnectionString);
                 cancellationToken.Register(() => { router.Dispose(); });
 
                 if (message != null)

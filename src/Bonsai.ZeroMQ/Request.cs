@@ -13,13 +13,13 @@ namespace Bonsai.ZeroMQ
     public class Request : Combinator<Message, ZeroMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Request"/> socket.
+        /// Gets or sets a value specifying the connection string of the <see cref="Request"/> socket.
         /// </summary>
-        [TypeConverter(typeof(ConnectionIdConverter))]
-        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
+        [TypeConverter(typeof(ConnectionStringConverter))]
+        public string ConnectionString { get; set; }
 
         /// <summary>
-        /// Creates a request socket with the specified <see cref="ZeroMQ.ConnectionId"/>
+        /// Creates a request socket with the specified <see cref="ConnectionString"/>
         /// </summary>
         /// <param name="source">
         /// A <see cref="Message"/> sequence to be sent by the socket.
@@ -31,7 +31,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Using(() =>
             {
-                var request = new RequestSocket(ConnectionId.ToString());
+                var request = new RequestSocket(ConnectionString);
                 return request;
             },
             request => source.Select(

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using Bonsai.Osc;
@@ -13,10 +13,10 @@ namespace Bonsai.ZeroMQ
     public class Publisher : Combinator<Message, ZeroMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Publisher"/> socket.
+        /// Gets or sets a value specifying the connection string of the <see cref="Publisher"/> socket.
         /// </summary>
-        [TypeConverter(typeof(ConnectionIdConverter))]
-        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
+        [TypeConverter(typeof(ConnectionStringConverter))]
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// Gets or sets a value specifying the topic of sent messages.
@@ -24,7 +24,7 @@ namespace Bonsai.ZeroMQ
         public string Topic { get; set; }
 
         /// <summary>
-        /// Creates a publisher socket with the specified <see cref="ZeroMQ.ConnectionId"/>
+        /// Creates a publisher socket with the specified <see cref="ConnectionString"/>
         /// </summary>
         /// <param name="source">
         /// A <see cref="Message"/> sequence to be sent by the socket.
@@ -36,7 +36,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Using(() =>
             {
-                var pub = new PublisherSocket(ConnectionId.ToString());
+                var pub = new PublisherSocket(ConnectionString);
                 return pub;
             },
             pub => source.Select(message => {

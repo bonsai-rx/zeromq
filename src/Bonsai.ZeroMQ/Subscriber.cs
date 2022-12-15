@@ -13,10 +13,10 @@ namespace Bonsai.ZeroMQ
     public class Subscriber : Source<ZeroMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Subscriber"/> socket.
+        /// Gets or sets a value specifying the connection string for the <see cref="Subscriber"/> socket.
         /// </summary>
-        [TypeConverter(typeof(ConnectionIdConverter))]
-        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
+        [TypeConverter(typeof(ConnectionStringConverter))]
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// Gets or sets a value specifying the topic that the socket will subscribe to.
@@ -24,7 +24,7 @@ namespace Bonsai.ZeroMQ
         public string Topic { get; set; }
 
         /// <summary>
-        /// Creates a subscriber socket with the specified <see cref="ZeroMQ.ConnectionId"/>.
+        /// Creates a subscriber socket with the specified <see cref="ConnectionString"/>.
         /// </summary>
         /// <returns>
         /// A sequence of <see cref="ZeroMQMessage"/> representing received messages from the subscriber socket.
@@ -33,7 +33,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
-                var sub = new SubscriberSocket(ConnectionId.ToString());
+                var sub = new SubscriberSocket(ConnectionString);
                 sub.Subscribe(Topic);
 
                 return Task.Factory.StartNew(() =>
