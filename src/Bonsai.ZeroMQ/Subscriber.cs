@@ -16,7 +16,7 @@ namespace Bonsai.ZeroMQ
         /// Gets or sets a value specifying the connection string for the <see cref="Subscriber"/> socket.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
         /// Gets or sets a value specifying the topic that the socket will subscribe to.

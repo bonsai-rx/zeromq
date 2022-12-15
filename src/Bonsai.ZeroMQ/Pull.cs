@@ -16,7 +16,7 @@ namespace Bonsai.ZeroMQ
         /// Gets or sets a value specifying the connection string of the <see cref="Pull"/> socket.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
         /// Creates a Pull socket with the specified <see cref="ConnectionString"/>.

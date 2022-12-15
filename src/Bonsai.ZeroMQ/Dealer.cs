@@ -17,7 +17,7 @@ namespace Bonsai.ZeroMQ
         /// Gets or sets a value specifying the connection string of the <see cref="Dealer"/> socket.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
         /// If no <see cref="Message"/> sequence is provided as source, creates a Dealer socket that acts only as a server listener.

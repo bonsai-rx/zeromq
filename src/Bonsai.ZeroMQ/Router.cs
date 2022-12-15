@@ -17,7 +17,7 @@ namespace Bonsai.ZeroMQ
         /// Gets or sets a value specifying the connection string of the <see cref="Router"/> socket.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
         /// If no <see cref="Message"/> sequence is provided as source, creates a Router socket that acts only as a client listener.
