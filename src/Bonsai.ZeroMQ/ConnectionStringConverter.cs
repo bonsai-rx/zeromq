@@ -62,9 +62,11 @@ namespace Bonsai.ZeroMQ
         {
             return value switch
             {
-                SocketProtocol.TCP => "tcp",
                 SocketProtocol.InProc => "inproc",
-                SocketProtocol.PGM => "pgm",
+                SocketProtocol.Tcp => "tcp",
+                SocketProtocol.Ipc => "ipc",
+                SocketProtocol.Pgm => "pgm",
+                SocketProtocol.Epgm => "epgm",
                 _ => string.Empty
             };
         }
@@ -137,9 +139,11 @@ namespace Bonsai.ZeroMQ
             {
                 return GetProtocol(component) switch
                 {
-                    "tcp" => SocketProtocol.TCP,
-                    "pgm" => SocketProtocol.PGM,
                     "inproc" => SocketProtocol.InProc,
+                    "tcp" => SocketProtocol.Tcp,
+                    "ipc" => SocketProtocol.Ipc,
+                    "pgm" => SocketProtocol.Pgm,
+                    "epgm" => SocketProtocol.Epgm,
                     _ => throw new ArgumentException("Invalid protocol type string"),
                 };
             }
@@ -174,9 +178,11 @@ namespace Bonsai.ZeroMQ
 
         internal enum SocketProtocol
         {
-            TCP,
             InProc,
-            PGM
+            Tcp,
+            Ipc,
+            Pgm,
+            Epgm
         }
     }
 }
