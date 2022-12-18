@@ -6,25 +6,25 @@ namespace Bonsai.ZeroMQ
 {
     internal class ConnectionStringConverter : StringConverter
     {
-        const char BindCharacter = '@';
-        const char ConnectCharacter = '>';
+        const char BindPrefix = '@';
+        const char ConnectPrefix = '>';
         const string ProtocolDelimiter = "://";
 
-        static char GetDefaultAction(object value)
+        static char? GetDefaultAction(object value)
         {
             if (value is string connectionString && connectionString.Length > 0)
             {
                 return connectionString[0];
             }
 
-            return ConnectCharacter;
+            return null;
         }
 
         static string GetProtocol(object value)
         {
             if (value is string connectionString)
             {
-                var trimString = connectionString.Trim(BindCharacter, ConnectCharacter);
+                var trimString = connectionString.Trim(BindPrefix, ConnectPrefix);
                 var separatorIndex = trimString.IndexOf(ProtocolDelimiter);
                 if (separatorIndex >= 0)
                 {
@@ -48,13 +48,13 @@ namespace Bonsai.ZeroMQ
             return string.Empty;
         }
 
-        static string GetActionString(DefaultAction value)
+        static char? GetActionString(DefaultAction? value)
         {
             return value switch
             {
-                DefaultAction.Connect => ">",
-                DefaultAction.Bind => "@",
-                _ => string.Empty
+                DefaultAction.Connect => ConnectPrefix,
+                DefaultAction.Bind => BindPrefix,
+                _ => null
             };
         }
 
@@ -71,7 +71,7 @@ namespace Bonsai.ZeroMQ
 
         public override object CreateInstance(ITypeDescriptorContext context, IDictionary propertyValues)
         {
-            var action = (DefaultAction)propertyValues[nameof(DefaultAction)];
+            var action = (DefaultAction?)propertyValues[nameof(DefaultAction)];
             var protocol = (SocketProtocol)propertyValues[nameof(SocketProtocol)];
             var address = propertyValues["Address"];
             return $"{GetActionString(action)}{GetProtocolString(protocol)}{ProtocolDelimiter}{address}";
@@ -100,20 +100,21 @@ namespace Bonsai.ZeroMQ
         class DefaultActionDescriptor : SimplePropertyDescriptor
         {
             public DefaultActionDescriptor()
-                : base(typeof(string), nameof(DefaultAction), typeof(DefaultAction))
+                : base(typeof(string), nameof(DefaultAction), typeof(DefaultAction?))
             {
             }
 
             public override Type PropertyType => typeof(string);
 
-            public override TypeConverter Converter => TypeDescriptor.GetConverter(typeof(DefaultAction));
+            public override TypeConverter Converter => TypeDescriptor.GetConverter(typeof(DefaultAction?));
 
             public override object GetValue(object component)
             {
                 return GetDefaultAction(component) switch
                 {
-                    '@' => DefaultAction.Bind,
-                    _ => DefaultAction.Connect
+                    BindPrefix => DefaultAction.Bind,
+                    ConnectPrefix => DefaultAction.Connect,
+                    _ => null
                 };
             }
 
