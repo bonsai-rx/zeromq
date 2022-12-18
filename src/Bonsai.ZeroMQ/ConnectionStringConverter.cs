@@ -48,33 +48,33 @@ namespace Bonsai.ZeroMQ
             return string.Empty;
         }
 
-        static char? GetActionString(DefaultAction? value)
+        static char? GetActionString(Action? value)
         {
             return value switch
             {
-                DefaultAction.Connect => ConnectPrefix,
-                DefaultAction.Bind => BindPrefix,
+                Action.Connect => ConnectPrefix,
+                Action.Bind => BindPrefix,
                 _ => null
             };
         }
 
-        static string GetProtocolString(SocketProtocol value)
+        static string GetProtocolString(Protocol value)
         {
             return value switch
             {
-                SocketProtocol.InProc => "inproc",
-                SocketProtocol.Tcp => "tcp",
-                SocketProtocol.Ipc => "ipc",
-                SocketProtocol.Pgm => "pgm",
-                SocketProtocol.Epgm => "epgm",
+                Protocol.InProc => "inproc",
+                Protocol.Tcp => "tcp",
+                Protocol.Ipc => "ipc",
+                Protocol.Pgm => "pgm",
+                Protocol.Epgm => "epgm",
                 _ => string.Empty
             };
         }
 
         public override object CreateInstance(ITypeDescriptorContext context, IDictionary propertyValues)
         {
-            var action = (DefaultAction?)propertyValues[nameof(DefaultAction)];
-            var protocol = (SocketProtocol)propertyValues[nameof(SocketProtocol)];
+            var action = (Action?)propertyValues[nameof(Action)];
+            var protocol = (Protocol)propertyValues[nameof(Protocol)];
             var address = propertyValues["Address"];
             return $"{GetActionString(action)}{GetProtocolString(protocol)}{ProtocolDelimiter}{address}";
         }
@@ -93,29 +93,29 @@ namespace Bonsai.ZeroMQ
         {
             return new PropertyDescriptorCollection(new PropertyDescriptor[]
             {
-                new DefaultActionDescriptor(),
-                new SocketProtocolDescriptor(),
+                new ActionDescriptor(),
+                new ProtocolDescriptor(),
                 new AddressDescriptor()
-            }).Sort(new[] { nameof(DefaultAction), nameof(SocketProtocol) });
+            }).Sort(new[] { nameof(Action), nameof(Protocol) });
         }
 
-        class DefaultActionDescriptor : SimplePropertyDescriptor
+        class ActionDescriptor : SimplePropertyDescriptor
         {
-            public DefaultActionDescriptor()
-                : base(typeof(string), nameof(DefaultAction), typeof(DefaultAction?))
+            public ActionDescriptor()
+                : base(typeof(string), nameof(Action), typeof(Action?))
             {
             }
 
             public override Type PropertyType => typeof(string);
 
-            public override TypeConverter Converter => TypeDescriptor.GetConverter(typeof(DefaultAction?));
+            public override TypeConverter Converter => TypeDescriptor.GetConverter(typeof(Action?));
 
             public override object GetValue(object component)
             {
                 return GetDefaultAction(component) switch
                 {
-                    BindPrefix => DefaultAction.Bind,
-                    ConnectPrefix => DefaultAction.Connect,
+                    BindPrefix => Action.Bind,
+                    ConnectPrefix => Action.Connect,
                     _ => null
                 };
             }
@@ -125,25 +125,25 @@ namespace Bonsai.ZeroMQ
             }
         }
 
-        class SocketProtocolDescriptor : SimplePropertyDescriptor
+        class ProtocolDescriptor : SimplePropertyDescriptor
         {
 
-            public SocketProtocolDescriptor()
-                : base(typeof(string), nameof(SocketProtocol), typeof(SocketProtocol))
+            public ProtocolDescriptor()
+                : base(typeof(string), nameof(Protocol), typeof(Protocol))
             {
             }
 
-            public override TypeConverter Converter => TypeDescriptor.GetConverter(typeof(SocketProtocol));
+            public override TypeConverter Converter => TypeDescriptor.GetConverter(typeof(Protocol));
 
             public override object GetValue(object component)
             {
                 return GetProtocol(component) switch
                 {
-                    "inproc" => SocketProtocol.InProc,
-                    "tcp" => SocketProtocol.Tcp,
-                    "ipc" => SocketProtocol.Ipc,
-                    "pgm" => SocketProtocol.Pgm,
-                    "epgm" => SocketProtocol.Epgm,
+                    "inproc" => Protocol.InProc,
+                    "tcp" => Protocol.Tcp,
+                    "ipc" => Protocol.Ipc,
+                    "pgm" => Protocol.Pgm,
+                    "epgm" => Protocol.Epgm,
                     _ => throw new ArgumentException("Invalid protocol type string"),
                 };
             }
@@ -170,13 +170,13 @@ namespace Bonsai.ZeroMQ
             }
         }
 
-        internal enum DefaultAction
+        internal enum Action
         {
             Connect,
             Bind
         }
 
-        internal enum SocketProtocol
+        internal enum Protocol
         {
             InProc,
             Tcp,
