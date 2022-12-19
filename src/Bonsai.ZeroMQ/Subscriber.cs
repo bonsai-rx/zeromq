@@ -8,52 +8,54 @@ using NetMQ.Sockets;
 namespace Bonsai.ZeroMQ
 {
     /// <summary>
-    /// Represents an operator that creates a Subscriber socket and listens for messages.
+    /// Represents an operator that creates a subscriber socket for receiving a sequence
+    /// of messages as part of the pub-sub pattern.
     /// </summary>
-    public class Subscriber : Source<ZeroMQMessage>
+    [Description("Creates a subscriber socket for receiving a sequence of messages as part of the pub-sub pattern.")]
+    public class Subscriber : Source<NetMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the connection string for the <see cref="Subscriber"/> socket.
+        /// Gets or sets a value specifying the endpoints to attach the socket to.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
+        [Description("Specifies the endpoints to attach the socket to.")]
         public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
-        /// Gets or sets a value specifying the topic that the socket will subscribe to.
+        /// Gets or sets the topic that the socket will subscribe to.
         /// </summary>
+        [Description("The topic that the socket will subscribe to.")]
         public string Topic { get; set; }
 
         /// <summary>
-        /// Creates a subscriber socket with the specified <see cref="ConnectionString"/>.
+        /// Creates a subscriber socket for receiving an observable sequence of
+        /// multiple part messages on the specified <see cref="Topic"/>.
         /// </summary>
         /// <returns>
-        /// A sequence of <see cref="ZeroMQMessage"/> representing received messages from the subscriber socket.
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// all multiple part messages received from the subscriber socket.
         /// </returns>
-        public override IObservable<ZeroMQMessage> Generate()
+        public override IObservable<NetMQMessage> Generate()
         {
-            return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
+            return Observable.Create<NetMQMessage>((observer, cancellationToken) =>
             {
-                var sub = new SubscriberSocket(ConnectionString);
-                sub.Subscribe(Topic);
-
+                var topic = Topic ?? string.Empty;
                 return Task.Factory.StartNew(() =>
                 {
-                    while (!cancellationToken.IsCancellationRequested)
+                    using (var subscriber = new SubscriberSocket(ConnectionString))
+                    using (var cancellation = cancellationToken.Register(subscriber.Close))
                     {
-                        string messageTopic = sub.ReceiveFrameString();
-                        byte[] messagePayload = sub.ReceiveFrameBytes();
-
-                        observer.OnNext(new ZeroMQMessage
+                        subscriber.Subscribe(topic);
+                        while (!cancellationToken.IsCancellationRequested)
                         {
-                            Address = null,
-                            Message = messagePayload,
-                            MessageType = MessageType.Subscribe
-                        });
+                            var message = subscriber.ReceiveMultipartMessage();
+                            observer.OnNext(message);
+                        }
                     }
-                }).ContinueWith(task => {
-                    sub.Dispose();
-                    task.Dispose();
-                });
+                },
+                cancellationToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
             });
         }
     }
