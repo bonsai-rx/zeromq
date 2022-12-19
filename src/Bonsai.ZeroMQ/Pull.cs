@@ -13,13 +13,13 @@ namespace Bonsai.ZeroMQ
     public class Pull : Source<ZeroMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the <see cref="ZeroMQ.ConnectionId"/> of the <see cref="Pull"/> socket.
+        /// Gets or sets a value specifying the connection string of the <see cref="Pull"/> socket.
         /// </summary>
-        [TypeConverter(typeof(ConnectionIdConverter))]
-        public ConnectionId ConnectionId { get; set; } = new ConnectionId(SocketSettings.SocketConnection.Connect, SocketSettings.SocketProtocol.TCP, "localhost", "5557");
+        [TypeConverter(typeof(ConnectionStringConverter))]
+        public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
-        /// Creates a Pull socket with the specified <see cref="ZeroMQ.ConnectionId"/>.
+        /// Creates a Pull socket with the specified <see cref="ConnectionString"/>.
         /// </summary>
         /// <returns>
         /// A sequence of <see cref="ZeroMQMessage"/> representing received messages from the Pull socket.
@@ -28,7 +28,7 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
             {
-                var pull = new PullSocket(ConnectionId.ToString());
+                var pull = new PullSocket(ConnectionString);
 
                 return Task.Factory.StartNew(() =>
                 {
