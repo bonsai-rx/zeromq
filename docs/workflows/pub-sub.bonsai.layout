@@ -27,13 +27,25 @@
     <WindowState>Normal</WindowState>
   </DialogSettings>
   <DialogSettings>
+    <Visible>false</Visible>
+    <Location>
+      <X>0</X>
+      <Y>0</Y>
+    </Location>
+    <Size>
+      <Width>0</Width>
+      <Height>0</Height>
+    </Size>
+    <WindowState>Normal</WindowState>
+  </DialogSettings>
+  <DialogSettings>
     <Visible>true</Visible>
     <Location>
       <X>604</X>
       <Y>81</Y>
     </Location>
     <Size>
-      <Width>334</Width>
+      <Width>335</Width>
       <Height>272</Height>
     </Size>
     <WindowState>Normal</WindowState>
@@ -53,10 +65,6 @@
       <Height>239</Height>
     </Size>
     <WindowState>Normal</WindowState>
-    <VisualizerTypeName>Bonsai.Design.ObjectTextVisualizer</VisualizerTypeName>
-    <VisualizerSettings>
-      <ObjectTextVisualizer />
-    </VisualizerSettings>
   </DialogSettings>
   <DialogSettings>
     <Visible>false</Visible>
@@ -77,7 +85,7 @@
       <Y>356</Y>
     </Location>
     <Size>
-      <Width>334</Width>
+      <Width>335</Width>
       <Height>64</Height>
     </Size>
     <WindowState>Normal</WindowState>
@@ -117,7 +125,7 @@
       <Y>419</Y>
     </Location>
     <Size>
-      <Width>334</Width>
+      <Width>335</Width>
       <Height>64</Height>
     </Size>
     <WindowState>Normal</WindowState>
@@ -151,13 +159,25 @@
     <WindowState>Normal</WindowState>
   </DialogSettings>
   <DialogSettings>
+    <Visible>false</Visible>
+    <Location>
+      <X>0</X>
+      <Y>0</Y>
+    </Location>
+    <Size>
+      <Width>0</Width>
+      <Height>0</Height>
+    </Size>
+    <WindowState>Normal</WindowState>
+  </DialogSettings>
+  <DialogSettings>
     <Visible>true</Visible>
     <Location>
       <X>933</X>
       <Y>80</Y>
     </Location>
     <Size>
-      <Width>334</Width>
+      <Width>335</Width>
       <Height>271</Height>
     </Size>
     <WindowState>Normal</WindowState>
@@ -197,7 +217,7 @@
       <Y>357</Y>
     </Location>
     <Size>
-      <Width>334</Width>
+      <Width>335</Width>
       <Height>64</Height>
     </Size>
     <WindowState>Normal</WindowState>
