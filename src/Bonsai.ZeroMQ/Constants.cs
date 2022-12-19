@@ -2,6 +2,6 @@
 {
     internal static class Constants
     {
-        internal const string DefaultConnectionString = ">tcp://localhost:5557";
+        internal const string DefaultConnectionString = "tcp://localhost:5557";
     }
 }
