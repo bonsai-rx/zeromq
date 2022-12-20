@@ -11,6 +11,7 @@ namespace Bonsai.ZeroMQ
     /// Represents an operator that creates a subscriber socket for receiving a sequence
     /// of messages as part of the pub-sub pattern.
     /// </summary>
+    /// <seealso cref="Publisher"/>
     [Description("Creates a subscriber socket for receiving a sequence of messages as part of the pub-sub pattern.")]
     public class Subscriber : Source<NetMQMessage>
     {

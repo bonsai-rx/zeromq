@@ -10,6 +10,7 @@ namespace Bonsai.ZeroMQ
     /// Represents an operator that creates a publisher socket for transmitting a
     /// sequence of messages as part of the pub-sub pattern.
     /// </summary>
+    /// <seealso cref="Subscriber"/>
     [Description("Creates a publisher socket for transmitting a sequence of messages as part of the pub-sub pattern.")]
     public class Publisher : Sink<NetMQMessage>
     {
