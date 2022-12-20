@@ -49,36 +49,6 @@
       <Expression xsi:type="osc:Parse">
         <osc:TypeTag>h</osc:TypeTag>
       </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="rx:Timer">
-          <rx:DueTime>PT0S</rx:DueTime>
-          <rx:Period>PT0.5S</rx:Period>
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="osc:Format">
-        <osc:Address>/</osc:Address>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>Buffer.Array</Selector>
-      </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="zmq:Publisher">
-          <zmq:ConnectionString>tcp://localhost:5558</zmq:ConnectionString>
-          <zmq:Topic>data2</zmq:Topic>
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="zmq:Subscriber">
-          <zmq:ConnectionString>tcp://localhost:5558</zmq:ConnectionString>
-          <zmq:Topic />
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>Last.Buffer</Selector>
-      </Expression>
-      <Expression xsi:type="osc:Parse">
-        <osc:TypeTag>h</osc:TypeTag>
-      </Expression>
     </Nodes>
     <Edges>
       <Edge From="0" To="1" Label="Source1" />
@@ -88,11 +58,6 @@
       <Edge From="5" To="6" Label="Source1" />
       <Edge From="7" To="8" Label="Source1" />
       <Edge From="8" To="9" Label="Source1" />
-      <Edge From="10" To="11" Label="Source1" />
-      <Edge From="11" To="12" Label="Source1" />
-      <Edge From="12" To="13" Label="Source1" />
-      <Edge From="14" To="15" Label="Source1" />
-      <Edge From="15" To="16" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
