@@ -8,45 +8,45 @@ using NetMQ.Sockets;
 namespace Bonsai.ZeroMQ
 {
     /// <summary>
-    /// Represents an operator that creates a Pull socket and listens for messages.
+    /// Represents an operator that creates a pull socket for receiving a sequence
+    /// of messages as part of the push-pull pattern.
     /// </summary>
-    public class Pull : Source<ZeroMQMessage>
+    [Description("Creates a pull socket for receiving a sequence of messages as part of the push-pull pattern.")]
+    public class Pull : Source<NetMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the connection string of the <see cref="Pull"/> socket.
+        /// Gets or sets a value specifying the endpoints to attach the socket to.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
+        [Description("Specifies the endpoints to attach the socket to.")]
         public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
-        /// Creates a Pull socket with the specified <see cref="ConnectionString"/>.
+        /// Creates a pull socket for receiving an observable sequence of
+        /// multiple part messages as part of the push-pull pattern.
         /// </summary>
         /// <returns>
-        /// A sequence of <see cref="ZeroMQMessage"/> representing received messages from the Pull socket.
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// all multiple part messages received from the pull socket.
         /// </returns>
-        public override IObservable<ZeroMQMessage> Generate()
+        public override IObservable<NetMQMessage> Generate()
         {
-            return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
+            return Observable.Create<NetMQMessage>((observer, cancellationToken) =>
             {
-                var pull = new PullSocket(ConnectionString);
-
                 return Task.Factory.StartNew(() =>
                 {
-                    while (!cancellationToken.IsCancellationRequested)
+                    using (var pull = new PullSocket(ConnectionString))
                     {
-                        byte[] messagePayload = pull.ReceiveFrameBytes();
-
-                        observer.OnNext(new ZeroMQMessage
+                        while (!cancellationToken.IsCancellationRequested)
                         {
-                            Address = null,
-                            Message = messagePayload,
-                            MessageType = MessageType.Pull
-                        });
+                            var message = pull.ReceiveMultipartMessage();
+                            observer.OnNext(message);
+                        }
                     }
-                }).ContinueWith(task => {
-                    pull.Dispose();
-                    task.Dispose();
-                });
+                },
+                cancellationToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
             });
         }
     }
