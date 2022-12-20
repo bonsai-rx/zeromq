@@ -1,47 +1,80 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using Bonsai.Osc;
 using NetMQ;
 using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
     /// <summary>
-    /// Represents an operator that creates a Push socket to send sequences of <see cref="Message"/>.
+    /// Represents an operator that creates a push socket for transmitting a
+    /// sequence of messages as part of the push-pull pattern.
     /// </summary>
-    public class Push : Combinator<Message, ZeroMQMessage>
+    [Description("Creates a push socket for transmitting a sequence of messages as part of the push-pull pattern.")]
+    public class Push : Sink<NetMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the connection string of the <see cref="Push"/> socket.
+        /// Gets or sets a value specifying the endpoints to attach the socket to.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
+        [Description("Specifies the endpoints to attach the socket to.")]
         public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
-        /// Creates a Push socket with the specified <see cref="ConnectionString"/>.
+        /// Creates a push socket for transmitting an observable sequence
+        /// of binary coded messages.
         /// </summary>
         /// <param name="source">
-        /// A <see cref="Message"/> sequence to be sent by the socket.
+        /// The sequence of binary coded messages to transmit.
         /// </param>
         /// <returns>
-        /// A <see cref="ZeroMQMessage"/> sequence representing messages sent by the socket.
+        /// An observable sequence that is identical to the <paramref name="source"/>
+        /// sequence but where there is an additional side effect of transmitting
+        /// the binary coded messages over a push socket.
         /// </returns>
-        public override IObservable<ZeroMQMessage> Process(IObservable<Message> source)
+        public IObservable<byte[]> Process(IObservable<byte[]> source)
         {
-            return Observable.Using(() =>
-            {
-                var push = new PushSocket(ConnectionString);
-                return push;
-            },
-            push => source.Select(message => {
-                push.TrySendFrame(message.Buffer.Array);
-                return new ZeroMQMessage { 
-                    Address = null, 
-                    Message = message.Buffer.Array, 
-                    MessageType = MessageType.Push 
-                };
-            }).Finally(() => { push.Dispose(); }));
+            return Observable.Using(
+                () => new PushSocket(ConnectionString),
+                push => source.Do(message => push.SendFrame(message)));
+        }
+
+        /// <summary>
+        /// Creates a push socket for transmitting an observable sequence
+        /// of <see cref="string"/> messages.
+        /// </summary>
+        /// <param name="source">
+        /// The sequence of <see cref="string"/> messages to transmit.
+        /// </param>
+        /// <returns>
+        /// An observable sequence that is identical to the <paramref name="source"/>
+        /// sequence but where there is an additional side effect of transmitting
+        /// the <see cref="string"/> messages over a push socket.
+        /// </returns>
+        public IObservable<string> Process(IObservable<string> source)
+        {
+            return Observable.Using(
+                () => new PushSocket(ConnectionString),
+                push => source.Do(message => push.SendFrame(message)));
+        }
+
+        /// <summary>
+        /// Creates a push socket for transmitting an observable sequence
+        /// of multiple part messages.
+        /// </summary>
+        /// <param name="source">
+        /// The sequence of multiple part messages to transmit.
+        /// </param>
+        /// <returns>
+        /// An observable sequence that is identical to the <paramref name="source"/>
+        /// sequence but where there is an additional side effect of transmitting
+        /// the multiple part messages over a push socket.
+        /// </returns>
+        public override IObservable<NetMQMessage> Process(IObservable<NetMQMessage> source)
+        {
+            return Observable.Using(
+                () => new PushSocket(ConnectionString),
+                push => source.Do(message => push.SendMultipartMessage(message)));
         }
     }
 }
