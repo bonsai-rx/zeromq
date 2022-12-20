@@ -10,6 +10,7 @@ namespace Bonsai.ZeroMQ
     /// Represents an operator that creates a push socket for transmitting a
     /// sequence of messages as part of the push-pull pattern.
     /// </summary>
+    /// <seealso cref="Pull"/>
     [Description("Creates a push socket for transmitting a sequence of messages as part of the push-pull pattern.")]
     public class Push : Sink<NetMQMessage>
     {

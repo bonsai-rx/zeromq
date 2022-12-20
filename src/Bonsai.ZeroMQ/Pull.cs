@@ -11,6 +11,7 @@ namespace Bonsai.ZeroMQ
     /// Represents an operator that creates a pull socket for receiving a sequence
     /// of messages as part of the push-pull pattern.
     /// </summary>
+    /// <seealso cref="Push"/>
     [Description("Creates a pull socket for receiving a sequence of messages as part of the push-pull pattern.")]
     public class Pull : Source<NetMQMessage>
     {

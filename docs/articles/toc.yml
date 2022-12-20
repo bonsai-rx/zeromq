@@ -10,3 +10,5 @@
       href: patterns.md
     - name: Publish-Subscribe
       href: pub-sub.md
+    - name: Push-Pull
+      href: push-pull.md
