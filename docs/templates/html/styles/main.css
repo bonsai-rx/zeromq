@@ -99,3 +99,19 @@
 summary {
   display: list-item;
 }
+
+pre:has(> .lang-mermaid) {
+  background-color: transparent;
+}
+
+.lang-mermaid, .label {
+  line-height: unset;
+  font-size: unset;
+  font-weight: unset;
+}
+
+.lang-mermaid, hr {
+  margin-top: unset;
+  margin-bottom: unset;
+  border-color: unset;
+}
