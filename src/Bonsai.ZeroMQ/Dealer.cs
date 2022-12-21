@@ -1,74 +1,84 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Bonsai.Osc;
 using NetMQ;
 using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
     /// <summary>
-    /// Represents an operator that creates a Dealer to act as either server listener or both server listener and sender of sequences of <see cref="Message"/>.
+    /// Represents an operator that creates a dealer socket for transmitting a sequence of
+    /// messages and receiving responses asynchronously while maintaining load balance.
     /// </summary>
-    public class Dealer : Source<ZeroMQMessage>
+    [Description("Creates a dealer socket for transmitting a sequence of messages and receiving responses asynchronously while maintaining load balance.")]
+    public class Dealer : Combinator<NetMQMessage, NetMQMessage>
     {
         /// <summary>
-        /// Gets or sets a value specifying the connection string of the <see cref="Dealer"/> socket.
+        /// Gets or sets a value specifying the endpoints to attach the socket to.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
+        [Description("Specifies the endpoints to attach the socket to.")]
         public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
-        /// If no <see cref="Message"/> sequence is provided as source, creates a Dealer socket that acts only as a server listener.
+        /// Creates a dealer socket for transmitting an observable sequence of messages
+        /// and receiving responses asynchronously while maintaining load balance.
         /// </summary>
-        /// <returns>
-        /// A sequence of <see cref="ZeroMQMessage"/> representing messages received by the socket.
-        /// </returns>
-        public override IObservable<ZeroMQMessage> Generate()
-        {
-            return Generate(null);
-        }
-
-        /// <summary>
-        /// If a <see cref="Message"/> sequence is provided as source, creates a Dealer sockets that acts as both a server listener and sender of <see cref="Message"/>.
-        /// </summary>
-        /// <param name="message">
-        /// A <see cref="Message"/> sequence to be sent by the socket.
+        /// <param name="source">
+        /// The sequence of multiple part messages to transmit.
         /// </param>
         /// <returns>
-        /// A sequence of <see cref="ZeroMQMessage"/> representing messages received by the socket.
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// multiple part responses received from the request socket.
         /// </returns>
-        public IObservable<ZeroMQMessage> Generate(IObservable<Message> message)
+        public override IObservable<NetMQMessage> Process(IObservable<NetMQMessage> source)
         {
-            return Observable.Create<ZeroMQMessage>((observer, cancellationToken) =>
+            return Observable.Create<NetMQMessage>(observer =>
             {
+                var pendingRequests = 1;
                 var dealer = new DealerSocket(ConnectionString);
-                cancellationToken.Register(() => { dealer.Dispose(); });
-
-                if (message != null)
+                var poller = new NetMQPoller { dealer };
+                dealer.ReceiveReady += (sender, e) =>
                 {
-                    var sender = message.Do(m =>
+                    e.Socket.SkipFrame(out bool more);
+                    if (more)
                     {
-                        dealer.SendMoreFrameEmpty().SendFrame(m.Buffer.Array);
-                    }).Subscribe();
-
-                    cancellationToken.Register(() => { sender.Dispose(); });
-                }
-
-                return Task.Factory.StartNew(() =>
-                {
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        var messageFromServer = dealer.ReceiveMultipartMessage();
-                        observer.OnNext(new ZeroMQMessage
+                        var message = e.Socket.ReceiveMultipartMessage();
+                        observer.OnNext(message);
+                        if (Interlocked.Decrement(ref pendingRequests) <= 0)
                         {
-                            Address = null,
-                            Message = messageFromServer[1].ToByteArray(),
-                            MessageType = MessageType.Dealer
-                        });
+                            observer.OnCompleted();
+                        }
                     }
-                });
+                };
+                var sourceObserver = Observer.Create<NetMQMessage>(
+                    message =>
+                    {
+                        dealer.SendMoreFrameEmpty().SendMultipartMessage(message);
+                        Interlocked.Increment(ref pendingRequests);
+                    },
+                    observer.OnError,
+                    () =>
+                    {
+                        if (Interlocked.Decrement(ref pendingRequests) <= 0)
+                        {
+                            observer.OnCompleted();
+                        }
+                    });
+                poller.RunAsync();
+                return new CompositeDisposable
+                {
+                    source.SubscribeSafe(sourceObserver),
+                    Disposable.Create(() => Task.Run(() =>
+                    {
+                        poller.Dispose();
+                        dealer.Dispose();
+                    }))
+                };
             });
         }
     }
