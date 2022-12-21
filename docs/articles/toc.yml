@@ -8,6 +8,8 @@
   items:
     - name: Overview
       href: patterns.md
+    - name: Request-Response
+      href: req-rep.md
     - name: Publish-Subscribe
       href: pub-sub.md
     - name: Push-Pull
