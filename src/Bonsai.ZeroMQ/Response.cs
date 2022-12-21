@@ -1,54 +1,63 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using Bonsai.Osc;
+using System.Threading.Tasks;
 using NetMQ;
 using NetMQ.Sockets;
 
 namespace Bonsai.ZeroMQ
 {
     /// <summary>
-    /// Represents an operator that creates a Response socket to send sequences of <see cref="Message"/> in response to a <see cref="Request"/>.
+    /// Represents an operator that creates a response socket for receiving a sequence
+    /// of request messages and transmitting generated responses.
     /// </summary>
-    public class Response : Combinator<Message, ZeroMQMessage>
+    /// <seealso cref="SendResponse"/>
+    [Description("Creates a response socket for receiving a sequence of request messages and transmitting generated responses.")]
+    public class Response : Source<ResponseContext>
     {
         /// <summary>
-        /// Gets or sets a value specifying the connection string of the <see cref="Response"/> socket.
+        /// Gets or sets a value specifying the endpoints to attach the socket to.
         /// </summary>
         [TypeConverter(typeof(ConnectionStringConverter))]
+        [Description("Specifies the endpoints to attach the socket to.")]
         public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
-        /// <summary>
-        /// Creates a response socket with the specified <see cref="ConnectionString"/>.
+        /// Creates a response socket for receiving an observable sequence
+        /// of request messages and transmitting generated responses.
         /// </summary>
-        /// <param name="source">
-        /// A <see cref="Message"/> sequence to be sent by the socket.
-        /// </param>
         /// <returns>
-        /// A <see cref="ZeroMQMessage"/> sequence representing the messages sent by the socket.
+        /// An observable sequence of <see cref="ResponseContext"/> objects representing
+        /// received requests.
         /// </returns>
-        public override IObservable<ZeroMQMessage> Process(IObservable<Message> source)
+        public override IObservable<ResponseContext> Generate()
         {
-            return Observable.Using(() =>
+            return Observable.Create<ResponseContext>((observer, cancellationToken) =>
             {
-                var response = new ResponseSocket(ConnectionString);
-                return response;
-            },
-            response => source.Select(
-                message =>
+                return Task.Factory.StartNew(() =>
                 {
-                    var messageReceive = response.ReceiveFrameBytes();
-                    response.SendFrame(message.Buffer.Array);
-
-                    return new ZeroMQMessage
+                    try
                     {
-                        Address = null,
-                        Message = messageReceive,
-                        MessageType = MessageType.Response
-                    };
-                }).Finally(() => { response.Dispose(); })
-            ); ;
+                        using var responseSocket = new ResponseSocket(ConnectionString);
+                        using var cancellation = cancellationToken.Register(responseSocket.Close);
+                        while (!cancellationToken.IsCancellationRequested)
+                        {
+                            var message = responseSocket.ReceiveMultipartMessage();
+                            var remoteRequest = new ResponseContext(message);
+                            observer.OnNext(remoteRequest);
+                            var response = remoteRequest.Response.Wait();
+                            responseSocket.SendMultipartMessage(response);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        observer.OnError(ex);
+                    }
+                },
+                cancellationToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
+            });
         }
     }
 }
