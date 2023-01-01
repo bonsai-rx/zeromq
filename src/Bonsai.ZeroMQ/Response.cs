@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NetMQ;
 using NetMQ.Sockets;
@@ -57,6 +60,100 @@ namespace Bonsai.ZeroMQ
                     Disposable.Create(() => Task.Run(() =>
                     {
                         poller.Dispose();
+                        responseSocket.Dispose();
+                    }))
+                };
+            });
+        }
+
+        /// <summary>
+        /// Creates a response socket that returns all received requests and transmits
+        /// an observable sequence of binary-coded response messages.
+        /// </summary>
+        /// <param name="source">
+        /// The sequence of binary-coded response messages to transmit.
+        /// </param>
+        /// <returns>
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// multiple part requests received from the response socket.
+        /// </returns>
+        public IObservable<NetMQMessage> Generate(IObservable<byte[]> source)
+        {
+            return Generate(source, (responseSocket, response) => responseSocket.SendFrame(response));
+        }
+
+        /// <summary>
+        /// Creates a response socket that returns all received requests and transmits
+        /// an observable sequence of <see cref="string"/> response messages.
+        /// </summary>
+        /// <param name="source">
+        /// The sequence of <see cref="string"/> response messages to transmit.
+        /// </param>
+        /// <returns>
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// multiple part requests received from the response socket.
+        /// </returns>
+        public IObservable<NetMQMessage> Generate(IObservable<string> source)
+        {
+            return Generate(source, (responseSocket, response) => responseSocket.SendFrame(response));
+        }
+
+        /// <summary>
+        /// Creates a response socket that returns all received requests and transmits
+        /// an observable sequence of multiple part response messages.
+        /// </summary>
+        /// <param name="source">
+        /// The sequence of <see cref="NetMQMessage"/> objects representing the
+        /// multiple part response messages to transmit.
+        /// </param>
+        /// <returns>
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// multiple part requests received from the response socket.
+        /// </returns>
+        public IObservable<NetMQMessage> Generate(IObservable<NetMQMessage> source)
+        {
+            return Generate(source, (responseSocket, response) => responseSocket.SendMultipartMessage(response));
+        }
+
+        IObservable<NetMQMessage> Generate<TSource>(IObservable<TSource> source, Action<ResponseSocket, TSource> sendResponse)
+        {
+            return Observable.Create<NetMQMessage>(observer =>
+            {
+                var responseSocket = new ResponseSocket(ConnectionString);
+                var cancellationTokenSource = new CancellationTokenSource();
+                var blockingCollection = new BlockingCollection<TSource>();
+                var poller = new NetMQPoller { responseSocket };
+                responseSocket.ReceiveReady += (sender, e) =>
+                {
+                    var request = e.Socket.ReceiveMultipartMessage();
+                    observer.OnNext(request);
+                    try
+                    {
+                        var response = blockingCollection.Take(cancellationTokenSource.Token);
+                        sendResponse(responseSocket, response);
+                    }
+                    catch (InvalidOperationException) { observer.OnCompleted(); }
+                    catch (OperationCanceledException) { }
+                };
+                var sourceObserver = Observer.Create<TSource>(
+                    response => blockingCollection.Add(response, cancellationTokenSource.Token),
+                    observer.OnError,
+                    () =>
+                    {
+                        blockingCollection.CompleteAdding();
+                        if (blockingCollection.Count == 0)
+                        {
+                            observer.OnCompleted();
+                        }
+                    });
+                poller.RunAsync();
+                return new CompositeDisposable
+                {
+                    source.SubscribeSafe(sourceObserver),
+                    Disposable.Create(() => Task.Run(() =>
+                    {
+                        poller.Dispose();
+                        cancellationTokenSource.Cancel();
                         responseSocket.Dispose();
                     }))
                 };
