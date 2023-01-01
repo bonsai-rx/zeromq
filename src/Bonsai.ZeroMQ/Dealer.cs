@@ -25,17 +25,54 @@ namespace Bonsai.ZeroMQ
         public string ConnectionString { get; set; } = Constants.DefaultConnectionString;
 
         /// <summary>
-        /// Creates a dealer socket for transmitting an observable sequence of messages
-        /// and receiving responses asynchronously while maintaining load balance.
+        /// Creates a dealer socket for transmitting an observable sequence of binary-coded
+        /// requests and receiving responses asynchronously while maintaining load balance.
         /// </summary>
         /// <param name="source">
-        /// The sequence of multiple part messages to transmit.
+        /// The sequence of binary-coded request messages to transmit.
         /// </param>
         /// <returns>
         /// An observable sequence of <see cref="NetMQMessage"/> objects representing
-        /// multiple part responses received from the request socket.
+        /// multiple part responses received from the dealer socket.
+        /// </returns>
+        public IObservable<NetMQMessage> Process(IObservable<byte[]> source)
+        {
+            return Process(source, (dealer, request) => dealer.SendFrame(request));
+        }
+
+        /// <summary>
+        /// Creates a dealer socket for transmitting an observable sequence of <see cref="string"/>
+        /// requests and receiving responses asynchronously while maintaining load balance.
+        /// </summary>
+        /// <param name="source">
+        /// The sequence of <see cref="string"/> request messages to transmit.
+        /// </param>
+        /// <returns>
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// multiple part responses received from the dealer socket.
+        /// </returns>
+        public IObservable<NetMQMessage> Process(IObservable<string> source)
+        {
+            return Process(source, (dealer, request) => dealer.SendFrame(request));
+        }
+
+        /// <summary>
+        /// Creates a dealer socket for transmitting an observable sequence of request
+        /// messages and receiving responses asynchronously while maintaining load balance.
+        /// </summary>
+        /// <param name="source">
+        /// The sequence of multiple part request messages to transmit.
+        /// </param>
+        /// <returns>
+        /// An observable sequence of <see cref="NetMQMessage"/> objects representing
+        /// multiple part responses received from the dealer socket.
         /// </returns>
         public override IObservable<NetMQMessage> Process(IObservable<NetMQMessage> source)
+        {
+            return Process(source, (dealer, request) => dealer.SendMultipartMessage(request));
+        }
+
+        IObservable<NetMQMessage> Process<TSource>(IObservable<TSource> source, Action<IOutgoingSocket, TSource> sendRequest)
         {
             return Observable.Create<NetMQMessage>(observer =>
             {
@@ -47,18 +84,18 @@ namespace Bonsai.ZeroMQ
                     e.Socket.SkipFrame(out bool more);
                     if (more)
                     {
-                        var message = e.Socket.ReceiveMultipartMessage();
-                        observer.OnNext(message);
+                        var response = e.Socket.ReceiveMultipartMessage();
+                        observer.OnNext(response);
                         if (Interlocked.Decrement(ref pendingRequests) <= 0)
                         {
                             observer.OnCompleted();
                         }
                     }
                 };
-                var sourceObserver = Observer.Create<NetMQMessage>(
-                    message =>
+                var sourceObserver = Observer.Create<TSource>(
+                    request =>
                     {
-                        dealer.SendMoreFrameEmpty().SendMultipartMessage(message);
+                        sendRequest(dealer.SendMoreFrameEmpty(), request);
                         Interlocked.Increment(ref pendingRequests);
                     },
                     observer.OnError,
