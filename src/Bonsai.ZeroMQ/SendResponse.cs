@@ -67,14 +67,10 @@ namespace Bonsai.ZeroMQ
 
         static IObservable<NetMQMessage> Process(IObservable<ResponseContext> source, Func<IObservable<NetMQMessage>, IObservable<NetMQMessage>> selector)
         {
-            return source.SelectMany(async request =>
-            {
-                var message = request.Request;
-                var response = await selector(Observable.Return(message));
-                request.Response.OnNext(response);
-                request.Response.OnCompleted();
-                return response;
-            });
+            return source.SelectMany(context => selector(Observable
+                .Return(context.Request))
+                .LastAsync()
+                .Do(context.Response));
         }
     }
 }
