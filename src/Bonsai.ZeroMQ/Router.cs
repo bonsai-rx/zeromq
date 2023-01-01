@@ -64,17 +64,17 @@ namespace Bonsai.ZeroMQ
         }
 
         /// <summary>
-        /// Creates a router socket that appends an identity to all incoming messages
+        /// Creates a router socket that appends an identity to all received messages
         /// and reads it back from outgoing messages to determine the peer the message
         /// should be routed to.
         /// </summary>
         /// <param name="source">
         /// The sequence of <see cref="NetMQMessage"/> objects representing the
-        /// multiple part request messages to route back to peers.
+        /// multiple part response messages to route back to peers.
         /// </param>
         /// <returns>
         /// An observable sequence of <see cref="NetMQMessage"/> objects representing
-        /// uncoming multiple part responses received from the router socket.
+        /// multiple part requests received from the router socket.
         /// </returns>
         public IObservable<NetMQMessage> Generate(IObservable<NetMQMessage> source)
         {
