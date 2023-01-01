@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using NetMQ;
@@ -31,30 +33,33 @@ namespace Bonsai.ZeroMQ
         /// </returns>
         public override IObservable<ResponseContext> Generate()
         {
-            return Observable.Create<ResponseContext>((observer, cancellationToken) =>
+            return Observable.Create<ResponseContext>(observer =>
             {
-                return Task.Factory.StartNew(() =>
+                var router = new RouterSocket(ConnectionString);
+                var poller = new NetMQPoller { router };
+                router.ReceiveReady += (sender, e) =>
                 {
-                    var sendMutex = new object();
-                    using var router = new RouterSocket(ConnectionString);
-                    using var cancellation = cancellationToken.Register(router.Close);
-                    while (!cancellationToken.IsCancellationRequested)
+                    var request = e.Socket.ReceiveMultipartMessage();
+                    var responseContext = new ResponseContext(request);
+                    observer.OnNext(responseContext);
+
+                    void SendResponse()
                     {
-                        var message = router.ReceiveMultipartMessage();
-                        var requestMessage = new ResponseContext(message);
-                        requestMessage.Response.Subscribe(response =>
-                        {
-                            lock (sendMutex)
-                            {
-                                router.SendMultipartMessage(response);
-                            }
-                        });
-                        observer.OnNext(requestMessage);
+                        var response = responseContext.Response.GetResult();
+                        e.Socket.SendMultipartMessage(response);
                     }
-                },
-                cancellationToken,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+                    if (responseContext.Response.IsCompleted) SendResponse();
+                    else responseContext.Response.OnCompleted(() => poller.Run(SendResponse));
+                };
+                poller.RunAsync();
+                return new CompositeDisposable
+                {
+                    Disposable.Create(() => Task.Run(() =>
+                    {
+                        poller.Dispose();
+                        router.Dispose();
+                    }))
+                };
             });
         }
 
@@ -73,30 +78,28 @@ namespace Bonsai.ZeroMQ
         /// </returns>
         public IObservable<NetMQMessage> Generate(IObservable<NetMQMessage> source)
         {
-            return Observable.Create<NetMQMessage>((observer, cancellationToken) =>
+            return Observable.Create<NetMQMessage>(observer =>
             {
-                return Task.Factory.StartNew(() =>
+                var router = new RouterSocket(ConnectionString);
+                var poller = new NetMQPoller { router };
+                router.ReceiveReady += (sender, e) =>
                 {
-                    var sendMutex = new object();
-                    using var router = new RouterSocket(ConnectionString);
-                    using var cancellation = cancellationToken.Register(router.Close);
-                    using var subscription = source.Subscribe(response =>
+                    var request = e.Socket.ReceiveMultipartMessage();
+                    observer.OnNext(request);
+                };
+                var sourceObserver = Observer.Create<NetMQMessage>(
+                    response => poller.Run(() => router.SendMultipartMessage(response)),
+                    observer.OnError);
+                poller.RunAsync();
+                return new CompositeDisposable
+                {
+                    source.SubscribeSafe(sourceObserver),
+                    Disposable.Create(() => Task.Run(() =>
                     {
-                        lock (sendMutex)
-                        {
-                            router.SendMultipartMessage(response);
-                        }
-                    });
-
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        var message = router.ReceiveMultipartMessage();
-                        observer.OnNext(message);
-                    }
-                },
-                cancellationToken,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+                        poller.Dispose();
+                        router.Dispose();
+                    }))
+                };
             });
         }
     }
