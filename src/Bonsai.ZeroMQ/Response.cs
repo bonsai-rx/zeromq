@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using NetMQ;
@@ -32,31 +33,33 @@ namespace Bonsai.ZeroMQ
         /// </returns>
         public override IObservable<ResponseContext> Generate()
         {
-            return Observable.Create<ResponseContext>((observer, cancellationToken) =>
+            return Observable.Create<ResponseContext>(observer =>
             {
-                return Task.Factory.StartNew(() =>
+                var responseSocket = new ResponseSocket(ConnectionString);
+                var poller = new NetMQPoller { responseSocket };
+                responseSocket.ReceiveReady += (sender, e) =>
                 {
-                    try
+                    var request = e.Socket.ReceiveMultipartMessage();
+                    var responseContext = new ResponseContext(request);
+                    observer.OnNext(responseContext);
+
+                    void SendResponse()
                     {
-                        using var responseSocket = new ResponseSocket(ConnectionString);
-                        using var cancellation = cancellationToken.Register(responseSocket.Close);
-                        while (!cancellationToken.IsCancellationRequested)
-                        {
-                            var message = responseSocket.ReceiveMultipartMessage();
-                            var remoteRequest = new ResponseContext(message);
-                            observer.OnNext(remoteRequest);
-                            var response = remoteRequest.Response.Wait();
-                            responseSocket.SendMultipartMessage(response);
-                        }
+                        var response = responseContext.Response.GetResult();
+                        e.Socket.SendMultipartMessage(response);
                     }
-                    catch (Exception ex)
+                    if (responseContext.Response.IsCompleted) SendResponse();
+                    else responseContext.Response.OnCompleted(SendResponse);
+                };
+                poller.RunAsync();
+                return new CompositeDisposable
+                {
+                    Disposable.Create(() => Task.Run(() =>
                     {
-                        observer.OnError(ex);
-                    }
-                },
-                cancellationToken,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+                        poller.Dispose();
+                        responseSocket.Dispose();
+                    }))
+                };
             });
         }
     }
