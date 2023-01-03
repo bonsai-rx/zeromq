@@ -2,7 +2,6 @@
 <WorkflowBuilder Version="2.7.1"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
-                 xmlns:osc="clr-namespace:Bonsai.Osc;assembly=Bonsai.Osc"
                  xmlns:zmq="clr-namespace:Bonsai.ZeroMQ;assembly=Bonsai.ZeroMQ"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
@@ -13,12 +12,7 @@
           <rx:Period>PT1S</rx:Period>
         </Combinator>
       </Expression>
-      <Expression xsi:type="osc:Format">
-        <osc:Address>/</osc:Address>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>Buffer.Array</Selector>
-      </Expression>
+      <Expression xsi:type="Format" />
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="zmq:Publisher">
           <zmq:ConnectionString>tcp://localhost:5557</zmq:ConnectionString>
@@ -32,10 +26,13 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
-        <Selector>Last.Buffer</Selector>
+        <Selector>Last</Selector>
       </Expression>
-      <Expression xsi:type="osc:Parse">
-        <osc:TypeTag>h</osc:TypeTag>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:ConvertToString" />
+      </Expression>
+      <Expression xsi:type="Parse">
+        <Pattern>%l</Pattern>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="zmq:Subscriber">
@@ -44,20 +41,24 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
-        <Selector>Last.Buffer</Selector>
+        <Selector>Last</Selector>
       </Expression>
-      <Expression xsi:type="osc:Parse">
-        <osc:TypeTag>h</osc:TypeTag>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:ConvertToString" />
+      </Expression>
+      <Expression xsi:type="Parse">
+        <Pattern>%l</Pattern>
       </Expression>
     </Nodes>
     <Edges>
       <Edge From="0" To="1" Label="Source1" />
       <Edge From="1" To="2" Label="Source1" />
-      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
       <Edge From="4" To="5" Label="Source1" />
       <Edge From="5" To="6" Label="Source1" />
       <Edge From="7" To="8" Label="Source1" />
       <Edge From="8" To="9" Label="Source1" />
+      <Edge From="9" To="10" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
