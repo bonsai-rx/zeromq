@@ -55,14 +55,11 @@ namespace Bonsai.ZeroMQ
                     else responseContext.Response.OnCompleted(SendResponse);
                 };
                 poller.RunAsync();
-                return new CompositeDisposable
+                return Disposable.Create(() => Task.Run(() =>
                 {
-                    Disposable.Create(() => Task.Run(() =>
-                    {
-                        poller.Dispose();
-                        responseSocket.Dispose();
-                    }))
-                };
+                    poller.Dispose();
+                    responseSocket.Dispose();
+                }));
             });
         }
 
