@@ -18,3 +18,5 @@
       href: push-pull.md
     - name: Proxy
       href: proxy.md
+- name: Recipes
+  href: recipes.md
