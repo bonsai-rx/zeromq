@@ -29,10 +29,4 @@ In the example below, multiple clients send periodic requests to an asynchronous
 ![Req-Router workflow](~/workflows/req-router.bonsai)
 :::
 
-The <xref href="Bonsai.ZeroMQ.GetIdentity"/> operator can be used to extract all identity frames from a multiple part request. Content frames are stored after the empty delimiter frame. For simple requests this is usually the last frame, which can be retrieved directly using the `Last` property.
-
-After processing the response, we can simply merge the identity frames with the response frame to generate an outgoing message ready to be routed.
-
-:::workflow
-![Req-Router processing](~/workflows/req-router-processing.bonsai)
-:::
+Content frames are stored after the empty delimiter frame. For simple requests this is usually the last frame, which can be retrieved directly using the `Last` property. The <xref href="Bonsai.ZeroMQ.SendResponse"/> operator automatically takes care of pushing all identity frames from the request into the response to generate an outgoing message ready to be routed.
