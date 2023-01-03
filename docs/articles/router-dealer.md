@@ -5,7 +5,7 @@ title: "Router-Dealer"
 
 # Router-Dealer
 
-In the request-response (req-rep) pattern we typically have one client sending requests to a single server. However, in practice we often need to allow multiple requests to be processed in parallel by the server. We can use a <xref href="Bonsai.ZeroMQ.Router"/> socket to achieve this.
+In the @req-rep pattern we typically have one client sending requests to a single server. However, in practice we often need to allow multiple requests to be processed in parallel by the server. We can use a <xref href="Bonsai.ZeroMQ.Router"/> socket to achieve this.
 
 ```mermaid
 graph LR
