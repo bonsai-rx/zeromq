@@ -22,7 +22,7 @@ Distribution is fully asynchronous, and publisher and subscriber nodes can be st
 
 ### **Example:** Simple publish-subscribe stream
 
-In the example below, a periodic timer publishes counter updates with multiple downstream subscribers. The numeric data is packed into an array of bytes for transmission, and parsed back on reception.
+In the example below, a periodic timer publishes counter updates with multiple downstream subscribers. The numeric data is formatted as a string message for transmission, and parsed back on reception.
 
 :::workflow
 ![Pub-Sub workflow](~/workflows/pub-sub.bonsai)
