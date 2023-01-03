@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using NetMQ;
@@ -38,25 +39,23 @@ namespace Bonsai.ZeroMQ
         /// </returns>
         public override IObservable<NetMQMessage> Generate()
         {
-            return Observable.Create<NetMQMessage>((observer, cancellationToken) =>
+            return Observable.Create<NetMQMessage>(observer =>
             {
                 var topic = Topic ?? string.Empty;
-                return Task.Factory.StartNew(() =>
+                var subscriber = new SubscriberSocket(ConnectionString);
+                var poller = new NetMQPoller { subscriber };
+                subscriber.ReceiveReady += (sender, e) =>
                 {
-                    using (var subscriber = new SubscriberSocket(ConnectionString))
-                    using (var cancellation = cancellationToken.Register(subscriber.Close))
-                    {
-                        subscriber.Subscribe(topic);
-                        while (!cancellationToken.IsCancellationRequested)
-                        {
-                            var message = subscriber.ReceiveMultipartMessage();
-                            observer.OnNext(message);
-                        }
-                    }
-                },
-                cancellationToken,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+                    var message = e.Socket.ReceiveMultipartMessage();
+                    observer.OnNext(message);
+                };
+                subscriber.Subscribe(topic);
+                poller.RunAsync();
+                return Disposable.Create(() => Task.Run(() =>
+                {
+                    poller.Dispose();
+                    subscriber.Dispose();
+                }));
             });
         }
     }
