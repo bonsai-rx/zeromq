@@ -16,3 +16,5 @@
       href: router-dealer.md
     - name: Push-Pull
       href: push-pull.md
+    - name: Proxy
+      href: proxy.md
