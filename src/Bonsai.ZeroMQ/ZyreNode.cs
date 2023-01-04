@@ -60,14 +60,19 @@ namespace Bonsai.ZeroMQ
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.ShoutEvent), FromNode = e.SenderName, Content = e.Content });
                 };
 
-                return new CompositeDisposable
+                return Disposable.Create(() => Task.Run(() =>
                 {
-                    Disposable.Create(() => Task.Run(() =>
-                    {
-                        zyre.Stop();
-                        zyre.Dispose();
-                    }))
-                };
+                    zyre.Stop();
+                    zyre.Dispose();
+                }));
+                //return new CompositeDisposable
+                //{
+                //    Disposable.Create(() => Task.Run(() =>
+                //    {
+                //        zyre.Stop();
+                //        zyre.Dispose();
+                //    }))
+                //};
             });
 
             //return Observable.Using(() =>
