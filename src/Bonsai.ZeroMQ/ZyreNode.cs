@@ -8,6 +8,7 @@ using NetMQ;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
+using System.ServiceModel.Channels;
 
 namespace Bonsai.ZeroMQ
 {
@@ -19,11 +20,25 @@ namespace Bonsai.ZeroMQ
 
         public override IObservable<ZyreEvent> Generate()
         {
+            return Generate(null);
+        }
+
+        public IObservable<ZyreEvent> Generate(IObservable<NetMQMessage> source)
+        {
             return Observable.Create<ZyreEvent>(observer =>
             {
                 Zyre zyre = new Zyre(Name);
                 zyre.Join(Group);
                 zyre.Start();
+
+                // TODO - can only shout at the moment
+                if (source != null)
+                {
+                    var message = source.Do(m =>
+                    {
+                        zyre.Shout(Group, m);
+                    }).Subscribe();
+                }
 
                 zyre.EnterEvent += (sender, e) =>
                 {
