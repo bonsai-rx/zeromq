@@ -42,37 +42,58 @@ namespace Bonsai.ZeroMQ
 
                 zyre.EnterEvent += (sender, e) =>
                 {
-                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.EnterEvent), FromNode = e.SenderName, Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
+                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.EnterEvent), 
+                        FromNode = e.SenderName, 
+                        FromNodeUid = e.SenderUuid, 
+                        Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
                 zyre.EvasiveEvent += (sender, e) =>
                 {
-                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.EvasiveEvent), FromNode = e.SenderName, Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
+                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.EvasiveEvent), 
+                        FromNode = e.SenderName, 
+                        FromNodeUid = e.SenderUuid, 
+                        Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
                 zyre.ExitEvent += (sender, e) =>
                 {
-                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.ExitEvent), FromNode = e.SenderName, Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
+                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.ExitEvent), 
+                        FromNode = e.SenderName, 
+                        FromNodeUid = e.SenderUuid, 
+                        Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
                 zyre.JoinEvent += (sender, e) =>
                 {
-                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.JoinEvent), FromNode = e.SenderName, Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
+                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.JoinEvent),
+                        FromNode = e.SenderName, 
+                        FromNodeUid = e.SenderUuid, 
+                        Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
                 zyre.LeaveEvent += (sender, e) =>
                 {
-                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.LeaveEvent), FromNode = e.SenderName, Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
+                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.LeaveEvent), 
+                        FromNode = e.SenderName, 
+                        FromNodeUid = e.SenderUuid, 
+                        Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
                 zyre.WhisperEvent += (sender, e) =>
                 {
-                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.WhisperEvent), FromNode = e.SenderName, Content = e.Content });
+                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.WhisperEvent),
+                        FromNode = e.SenderName, 
+                        FromNodeUid = e.SenderUuid, 
+                        Content = e.Content });
                 };
 
                 zyre.ShoutEvent += (sender, e) =>
                 {
-                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.ShoutEvent), FromNode = e.SenderName, Content = e.Content });
+                    observer.OnNext(new ZyreEvent { EventType = nameof(zyre.ShoutEvent), 
+                        FromNode = e.SenderName, 
+                        FromNodeUid = e.SenderUuid, 
+                        Content = e.Content });
                 };
 
                 return Disposable.Create(() => Task.Run(() =>
@@ -88,6 +109,7 @@ namespace Bonsai.ZeroMQ
     {
         public string EventType;
         public string FromNode;
+        public Guid FromNodeUid;
         public NetMQMessage Content;
     }
 }
