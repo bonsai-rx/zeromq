@@ -39,17 +39,25 @@ namespace Bonsai.ZeroMQ
                 var poller = new NetMQPoller { router };
                 router.ReceiveReady += (sender, e) =>
                 {
-                    var request = e.Socket.ReceiveMultipartMessage();
-                    var responseContext = new ResponseContext(request);
-                    observer.OnNext(responseContext);
-
-                    void SendResponse()
+                    NetMQMessage request = default;
+                    while (e.Socket.TryReceiveMultipartMessage(ref request))
                     {
-                        var response = responseContext.Response.GetResult();
-                        e.Socket.SendMultipartMessage(response);
+                        var responseContext = new ResponseContext(request);
+                        observer.OnNext(responseContext);
+
+                        void SendResponse()
+                        {
+                            var response = responseContext.Response.GetResult();
+                            e.Socket.SendMultipartMessage(response);
+                        }
+                        if (!responseContext.Response.IsCompleted)
+                        {
+                            responseContext.Response.OnCompleted(() => poller.Run(SendResponse));
+                            break;
+                        }
+                        else SendResponse();
+                        request = default;
                     }
-                    if (responseContext.Response.IsCompleted) SendResponse();
-                    else responseContext.Response.OnCompleted(() => poller.Run(SendResponse));
                 };
                 poller.RunAsync();
                 return Disposable.Create(() => Task.Run(() =>
@@ -81,8 +89,12 @@ namespace Bonsai.ZeroMQ
                 var poller = new NetMQPoller { router };
                 router.ReceiveReady += (sender, e) =>
                 {
-                    var request = e.Socket.ReceiveMultipartMessage();
-                    observer.OnNext(request);
+                    NetMQMessage request = default;
+                    while (e.Socket.TryReceiveMultipartMessage(ref request))
+                    {
+                        observer.OnNext(request);
+                        request = default;
+                    }
                 };
                 var sourceObserver = Observer.Create<NetMQMessage>(
                     response => poller.Run(() => router.SendMultipartMessage(response)),

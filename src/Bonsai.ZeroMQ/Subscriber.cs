@@ -46,8 +46,12 @@ namespace Bonsai.ZeroMQ
                 var poller = new NetMQPoller { subscriber };
                 subscriber.ReceiveReady += (sender, e) =>
                 {
-                    var message = e.Socket.ReceiveMultipartMessage();
-                    observer.OnNext(message);
+                    NetMQMessage message = default;
+                    while (e.Socket.TryReceiveMultipartMessage(ref message))
+                    {
+                        observer.OnNext(message);
+                        message = default;
+                    }
                 };
                 subscriber.Subscribe(topic);
                 poller.RunAsync();

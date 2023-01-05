@@ -81,14 +81,16 @@ namespace Bonsai.ZeroMQ
                 var poller = new NetMQPoller { dealer };
                 dealer.ReceiveReady += (sender, e) =>
                 {
-                    e.Socket.SkipFrame(out bool more);
-                    if (more)
+                    while (e.Socket.TrySkipFrame(out bool more))
                     {
-                        var response = e.Socket.ReceiveMultipartMessage();
-                        observer.OnNext(response);
-                        if (Interlocked.Decrement(ref pendingRequests) <= 0)
+                        if (more)
                         {
-                            observer.OnCompleted();
+                            var response = e.Socket.ReceiveMultipartMessage();
+                            observer.OnNext(response);
+                            if (Interlocked.Decrement(ref pendingRequests) <= 0)
+                            {
+                                observer.OnCompleted();
+                            }
                         }
                     }
                 };
