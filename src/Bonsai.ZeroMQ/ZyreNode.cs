@@ -1,14 +1,10 @@
-﻿using Bonsai;
-using System;
-using System.Linq;
+﻿using System;
 using System.Reactive.Linq;
 using NetMQ.Zyre;
-using NetMQ.Zyre.ZyreEvents;
 using NetMQ;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
-using System.ServiceModel.Channels;
 
 namespace Bonsai.ZeroMQ
 {
@@ -23,7 +19,7 @@ namespace Bonsai.ZeroMQ
             return Generate(null);
         }
 
-        public IObservable<ZyreEvent> Generate(IObservable<NetMQMessage> source)
+        public IObservable<ZyreEvent> Generate(IObservable<ZyreMessage> source)
         {
             return Observable.Create<ZyreEvent>(observer =>
             {
@@ -36,10 +32,11 @@ namespace Bonsai.ZeroMQ
                 {
                     var message = source.Do(m =>
                     {
-                        zyre.Shout(Group, m);
+                        m.Send(zyre);
                     }).Subscribe();
                 }
 
+                // A peer has joined the network.
                 zyre.EnterEvent += (sender, e) =>
                 {
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.EnterEvent), 
@@ -48,6 +45,7 @@ namespace Bonsai.ZeroMQ
                         Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
+                // A peer is being evasive (quiet).
                 zyre.EvasiveEvent += (sender, e) =>
                 {
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.EvasiveEvent), 
@@ -56,6 +54,7 @@ namespace Bonsai.ZeroMQ
                         Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
+                // A peer has left the network.
                 zyre.ExitEvent += (sender, e) =>
                 {
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.ExitEvent), 
@@ -64,6 +63,7 @@ namespace Bonsai.ZeroMQ
                         Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
+                // A peer has joined a specific group.
                 zyre.JoinEvent += (sender, e) =>
                 {
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.JoinEvent),
@@ -72,6 +72,7 @@ namespace Bonsai.ZeroMQ
                         Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
+                // A peer has left a specific group.
                 zyre.LeaveEvent += (sender, e) =>
                 {
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.LeaveEvent), 
@@ -80,6 +81,7 @@ namespace Bonsai.ZeroMQ
                         Content = new NetMQMessage(new List<NetMQFrame> { NetMQFrame.Empty }) });
                 };
 
+                // A peer has sent this node a message.
                 zyre.WhisperEvent += (sender, e) =>
                 {
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.WhisperEvent),
@@ -88,6 +90,7 @@ namespace Bonsai.ZeroMQ
                         Content = e.Content });
                 };
 
+                // A peer has sent one of our groups a message.
                 zyre.ShoutEvent += (sender, e) =>
                 {
                     observer.OnNext(new ZyreEvent { EventType = nameof(zyre.ShoutEvent), 
@@ -111,5 +114,39 @@ namespace Bonsai.ZeroMQ
         public string FromNode;
         public Guid FromNodeUid;
         public NetMQMessage Content;
+    }
+
+    public enum ZyreCommandType
+    {
+        Shout,
+        Whisper
+    }
+
+    public abstract class ZyreMessage
+    {
+        public ZyreCommandType CommandType;
+        public NetMQMessage Message;
+
+        public abstract void Send(Zyre node);
+    }
+
+    public class ZyreMessageShout : ZyreMessage
+    {
+        public string Group;
+
+        public override void Send(Zyre node)
+        {
+            node.Shout(Group, Message);
+        }
+    }
+
+    public class ZyreMessageWhisper : ZyreMessage
+    {
+        public Guid Peer;
+
+        public override void Send(Zyre node)
+        {
+            node.Whisper(Peer, Message);
+        }
     }
 }
