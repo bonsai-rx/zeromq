@@ -42,17 +42,25 @@ namespace Bonsai.ZeroMQ
                 var poller = new NetMQPoller { responseSocket };
                 responseSocket.ReceiveReady += (sender, e) =>
                 {
-                    var request = e.Socket.ReceiveMultipartMessage();
-                    var responseContext = new ResponseContext(request);
-                    observer.OnNext(responseContext);
-
-                    void SendResponse()
+                    NetMQMessage request = default;
+                    while (e.Socket.TryReceiveMultipartMessage(ref request))
                     {
-                        var response = responseContext.Response.GetResult();
-                        e.Socket.SendMultipartMessage(response);
+                        var responseContext = new ResponseContext(request);
+                        observer.OnNext(responseContext);
+
+                        void SendResponse()
+                        {
+                            var response = responseContext.Response.GetResult();
+                            e.Socket.SendMultipartMessage(response);
+                        }
+                        if (!responseContext.Response.IsCompleted)
+                        {
+                            responseContext.Response.OnCompleted(SendResponse);
+                            break;
+                        }
+                        else SendResponse();
+                        request = default;
                     }
-                    if (responseContext.Response.IsCompleted) SendResponse();
-                    else responseContext.Response.OnCompleted(SendResponse);
                 };
                 poller.RunAsync();
                 return Disposable.Create(() => Task.Run(() =>
@@ -122,15 +130,21 @@ namespace Bonsai.ZeroMQ
                 var poller = new NetMQPoller { responseSocket };
                 responseSocket.ReceiveReady += (sender, e) =>
                 {
-                    var request = e.Socket.ReceiveMultipartMessage();
-                    observer.OnNext(request);
-                    try
+                    NetMQMessage request = default;
+                    while (e.Socket.TryReceiveMultipartMessage(ref request))
                     {
-                        var response = blockingCollection.Take(cancellationTokenSource.Token);
-                        sendResponse(responseSocket, response);
+                        observer.OnNext(request);
+                        try
+                        {
+                            var response = blockingCollection.Take(cancellationTokenSource.Token);
+                            sendResponse(responseSocket, response);
+                            request = default;
+                            continue;
+                        }
+                        catch (InvalidOperationException) { observer.OnCompleted(); }
+                        catch (OperationCanceledException) { }
+                        break;
                     }
-                    catch (InvalidOperationException) { observer.OnCompleted(); }
-                    catch (OperationCanceledException) { }
                 };
                 var sourceObserver = Observer.Create<TSource>(
                     response => blockingCollection.Add(response, cancellationTokenSource.Token),
