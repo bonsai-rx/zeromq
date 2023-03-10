@@ -6,7 +6,16 @@
           "files": [
             "Bonsai.ZeroMQ/Bonsai.ZeroMQ.csproj"
           ],
-          "src": "../src"
+          "src": "../src",
+          "exclude": [
+            "**/bin/**",
+            "**/obj/**",
+            "**/**.Tests/**",
+            "**/Bonsai.NuGet**/**",
+            "**/Bonsai.Configuration/**",
+            "**/Bonsai.StarterPack**/**",
+            "**/Bonsai.Templates/**"
+          ]
         }
       ],
       "dest": "api",
@@ -66,7 +75,7 @@
       "_gitContribute": {
         "repo": "https://github.com/bonsai-rx/zeromq",
         "branch": "main",
-        "apiSpecFolder": "docs/apidoc"
+        "apiSpecFolder": "apidoc"
       }
     },
     "output": "_site",
@@ -84,7 +93,9 @@
       ]
     },
     "xref": [
-      "https://bonsai-rx.org/docs/xrefmap.yml",
+      "https://horizongir.github.io/opencv.net/xrefmap.yml",
+      "https://horizongir.github.io/ZedGraph/xrefmap.yml",
+      "https://horizongir.github.io/opentk/xrefmap.yml",
       "https://horizongir.github.io/reactive/xrefmap.yml"
     ]
   }
