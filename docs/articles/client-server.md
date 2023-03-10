@@ -39,5 +39,8 @@ To begin with, we’ll create a simple client that sends basic messages on a net
 
 In Bonsai.ZeroMQ, the **`Dealer`** can have two functions based on its inputs. On its own, as above, the **`Dealer`** node creates a Dealer socket that listens for messages on the specified network. With the properties specified, we are asking our **`Dealer`** to listen for messages on the local machine on port 5557 using the TCP protocol. We use the ‘Connect’ argument for the `SocketConnection` property to tell the dealer that it will connect to a static part of the network with a known IP address, in this case the server which we will implement later.
 
-If we add inputs to the **`Dealer`**, it will act as both a sender and receiver of messages on the network. Before the **`Dealer`** node add a [**`KeyDown`**](xref:Bonsai.Windows.Input.KeyDown), [**`String`**](xref:Bonsai.Expressions.String), and [**`Format (Osc)`**](xref:Bonsai.Osc.Format) node in sequence.
+If we add inputs to the **`Dealer`**, it will act as both a sender and receiver of messages on the network. Before the **`Dealer`** node add a [**`KeyDown`**](xref:Bonsai.Windows.Input.KeyDown) and [**`String`**](xref:Bonsai.Expressions.String) node in sequence as input to the **`Dealer`**.
 
+:::workflow
+![Basic Dealer input](~/workflows/dealer-basic-input.bonsai)
+:::
