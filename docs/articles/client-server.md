@@ -65,3 +65,24 @@ As with the **`Dealer`** node, a **`Router`** node without any input will simply
 :::
 
 Running the workflow and then triggering client messages with key presses, we should see a unique `byte` value for each client in the **`Index`** node output and a corresponding `string` in the **`ConvertToString`** node output.
+
+## Client address tracking
+So far our network is rather one-sided. We can send client messages to the server which can in turn receive and parse them, but currently nothing is relayed back to the clients. The first goal for server feedbasck is that any time a client message is received, the server sends this message back to all connected clients. To do this, we first need a way of keeping track of all active clients. Add a [**`Zip`**](xref:Bonsai.Reactive.Zip) node to the **`Index`** node and connect the `byte[]` **`Buffer`** as the second input. 
+
+:::workflow
+![Address key-value pair](~/workflows/address-kvp.bonsai)
+:::
+
+Every time the **`Router`** receives a message, the **`Zip`** will create a `Tuple` that can be thought of as a key-value pair, with the unique `byte` address of the client as the key, and the full `byte[]` address used by ZeroMQ for routing as the value. Next, add a [**`DistinctBy`**](xref:Bonsai.Reactive.DisctinctBy) node after the **`Zip`** and set the `KeySelector` property to the `byte` value (`Item1`).
+
+:::workflow
+![Unique key-value pair](~/workflows/unique-kvp.bonsai)
+:::
+
+The **`DistinctBy`** node filters the output of **`Zip`** according to the unique `byte` value and produces a sequence containing only the distinct – or ‘new’ – values produced by **`Zip`**. The output of **`DistinctBy`** will therefore effectively be a sequence of unique client addresses corresponding to each connected client. We also need to store these unique values and make them available to other parts of the Bonsai workflow. Add a [**`ReplaySubject`**](xref:Bonsai.Reactive.ReplaySubject) node after **`DistinctBy`** and name it ‘ClientAddresses’. 
+
+:::workflow
+![Address ReplaySubject](~/workflows/address-replay-subject.bonsai)
+:::
+
+A **`ReplaySubject`** has the useful feature that it stores its input sequence and replays those values to any current or future subscribers. The effect in this case is that anything that subscribes to **`ClientAddresses`** will receive all the unique client addresses encountered by the server so far.
