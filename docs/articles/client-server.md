@@ -86,3 +86,45 @@ The **`DistinctBy`** node filters the output of **`Zip`** according to the uniqu
 :::
 
 A **`ReplaySubject`** has the useful feature that it stores its input sequence and replays those values to any current or future subscribers. The effect in this case is that anything that subscribes to **`ClientAddresses`** will receive all the unique client addresses encountered by the server so far.
+
+## Server --> client communication
+Eventually, we will use these unique client addresses to route server messages back to specific client. For now, we'll implement a more basic approach where the server just sends messages back to the client that originally sent them. The Bonsai ZeroMQ library provides a convenient node for this task in the form of [**`SendResponse`**](xref:Bonsai.ZeroMQ.SendResponse). Add this after the **`Router`** in a separate branch, and inside (double-click on **`SendResponse`**) add a **`String`** node with a generic response value like `ServerResponse` after the **`Source`** node. 
+
+:::workflow
+![Basic server response](~/workflows/server-basic-response.bonsai)
+:::
+
+The **`SendResponse`** node has a couple of interesting properties which may not be immediately obvious from this simple example. First, this node always transmits its response back to the ZeroMQ socket that initiated the request (in this case one of our **`Dealer`** clients) and we therefore do not need to specify an address in its processing logic. Second, the internal flow of **`SendResponse`** logic is computed asynchronously. This is very useful for responses that require more intensive computation and allows a **`Router`** to deal with frequent incoming **`Dealer`** requests efficiently. 
+
+> Imagine, for example, that our Dealer sockets were sending video snippets to a Router server that is tasked with doing some processing of the video and returning the results back to the Dealers. If the responses were not computed in an asynchronous manner we would start to incur a bottleneck on the router if there were many connected Dealers or frequent Dealer requests.
+
+Running this workflow, you should see a 'bounceback' where any **`Dealer`** client that sends a message receives a reply from the **`Router`** server. However, in order to address these messages to specific other clients we need to take a slightly different approach. Delete the **`SendResponse`** and **`ConvertToString`** branches and replace with a branch that generates a bounceback message without using the **`SendResponse`** node: 
+
+:::workflow
+![Server message multicast](~/workflows/server-message-multicast.bonsai)
+:::
+
+We had to change quite a few things to modify this workflow so let's step through the general logic. The first thing to note is that since we are avoiding the **`SendResponse`** node in this implementation we need to pass messages directly into the **`Router`**. To do this we generate a **`BehaviorSubject`** source with a `NetMQMessage` output type and connect it to the **`Router`** (can implement this by creating a **`ToMessage`** node, right-clicking it and creating a **`BehaviorSubject`** source). This will change the output type of the **`Router`** node from a `ResponseContext` to a `NetMQMessage` so we need to make some modifications to how we process the stream.
+
+ We want the **`Router`** to generate a reply message every time it receives a request from a **`Dealer`**. Since we are now building this message ourselves instead of using **`SendResponse`**, we branch off the **`Router`** with a **`SelectMany`** node. Inside, we split the `NetMQMessage` into its component `NetMQFrame` parts, taking the `First` frame for the address, using **`Index`** to grab the middle empty delimiter frame and creating a new **`String`** which we convert to a `NetMQFrame` for the message content. We **`Merge`** these component frames back together and use a **`Take`** node (with count = 3) followed by **`ToMessage`**. The **`Take`** node is particularly important here as 1) **`ToMessage`** will only complete the message once the observable stream is completed and 2) We need to close the observable anyway to complete the **`SelectMany`**. Finally, we use a **`MulticastSubject`** to send our completed message to the **`Router`**.
+
+ If we run the workflow now, we should see the same behavior as before (server bounces message back to initiating client).
+
+ ## SelectMany detour
+ Now our network has a complete loop of client --> server --> client communication, but only the client that sends a message receives anything back from the server. Instead we’d like all clients to know when any of the clients sends a message. We already have access to the connected clients from **`ClientAddresses`**, and we know how to package data and send it back to clients via the **`Router`**. In an imperative language we would do something like:
+
+ ```
+foreach (var client in Clients) {
+    Router.SendMessage(client.Address, Message);
+}
+```
+
+using a loop to send the message back to each client in turn. In a reactive / observable sequence based framework we have to think about this a bit differently. The solution is to use a **`SelectMany`** operator and it is worth taking a detour here to understand its use in some detail since we have already used it to generate our bounceback message and will apply it again for addressing multiple clients.
+
+The **`SelectMany`** operator can be a tricky one to understand. Lee Campbell’s excellent [Introduction to Rx](http://introtorx.com/Content/v1.0.10621.0/08_Transformation.html#SelectMany) book does a good job of summarising its utility, suggesting we think of it as “from one, select many” or “from one, select zero or more”. In our case, we can think of **`SelectMany`** as a way to repeat some processing logic several times and feed the output of each repeat into a single sequence. More concretely, taking a single message and repeating the act of sending it several times for each client address. It is easier to show by example, so let’s set up a toy example in our project. 
+
+Create a **`KeyDown`** node followed by a **`SelectMany`**. Set the `Filter` for the **`KeyDown`** to a key that hasn’t been assigned to a client yet – here I will use ‘A’. Inside the **`SelectMany`** node add a **`SubscribeSubject`** and set its subscription to the `ClientAddresses` subject we created earlier to replay unique client addresses. Add a **`TakeUntil`** node after the **`SubscribeSubject`** and connect the output of **`TakeUntil`** to the **`WorkflowOutput`** (disconnecting the `Source` node). Finally, create a **`KeyUp`** node and connect it to **`TakeUntil`**. Set the key `Filter` for **`KeyUp`** to the same as previously created **`KeyDown`** node outside the **`SelectMany`**.
+
+:::workflow
+![SelectMany detour](~/workflows/select-many-detour.bonsai)
+:::
