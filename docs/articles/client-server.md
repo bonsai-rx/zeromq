@@ -35,7 +35,7 @@ ZeroMQ provides a number of socket types that could be used to achieve something
 - Messages can be passed between Router / Dealer sockets without the requirement that a reply is received before the next message is sent, as is the case with the Request / Response socket pair.
 
 ## Basic client
-To begin with, we’ll create a simple client that sends basic messages on a network. In a new Bonsai project, add a [**`Dealer`**](xref:Bonsai.ZeroMQ.Dealer) node. In the node properties, set `Host`: localhost, `Port`: 5557, `SocketConnection`: Connect, `SocketProtocol`: TCP.
+To begin with, we’ll create a simple client that sends basic messages on a network. In a new Bonsai project, add a [**`Dealer`**](xref:Bonsai.ZeroMQ.Dealer) node. In the `ConnectionString` property, set `Address`: localhost:5557, `Action`: Connect, `Protocol`: TCP.
 
 In Bonsai.ZeroMQ, the **`Dealer`** can have two functions based on its inputs. On its own, as above, the **`Dealer`** node creates a Dealer socket that listens for messages on the specified network. With the properties specified, we are asking our **`Dealer`** to listen for messages on the local machine on port 5557 using the TCP protocol. We use the ‘Connect’ argument for the `SocketConnection` property to tell the dealer that it will connect to a static part of the network with a known IP address, in this case the server which we will implement later.
 
@@ -44,3 +44,24 @@ If we add inputs to the **`Dealer`**, it will act as both a sender and receiver 
 :::workflow
 ![Basic Dealer input](~/workflows/dealer-basic-input.bonsai)
 :::
+
+In the node properties, set the **`KeyDown`** `Filter` to the ‘1’ key and set the **`String`** `Value` to ‘Client1’. If we run the Bonsai project now, the **`Dealer`** will continue listening for incoming messages on the network, but every time the ‘1’ key is pressed a message containing the string ‘Client1’ will be sent from the socket.
+
+Copy and paste this client structure a couple of times and change the **`KeyDown`** and **`String`** properties accordingly on each (2, ‘Client2’; 3, ‘Client3’) so that we have 3 total clients that send messages according to different key presses.
+
+:::workflow
+![Multiple clients](~/workflows/multiple-clients.bonsai)
+:::
+
+> For the purposes of this article we are creating all of our clients and our server on the same Bonsai project and same machine for ease of demonstration. In a working example, each client and server could be running in separate Bonsai instances on different machines on a network. In this case, localhost would be replaced with the server machine’s IP address.
+
+## Basic server
+Now that we have our client pool set up and sending messages, let’s implement a server to listen for those messages. Add a [**`Router`**](xref:Bonsai.ZeroMQ.Router) node to the project and set its properties to match the **`Dealer`** sockets we already added so that it is running on the same network. As the **`Router`** is acting as server and will be the ‘static’ part of the network, set its `Action` to ‘Bind’.
+
+As with the **`Dealer`** node, a **`Router`** node without any input will simply listen for messages on the network and not send anything in return. If we run the project now and monitor the output of the **`Router`** node, we'll see that each time the client sends a message triggered by its associated key press we get a `ResponseContext` produced at the **`Router`**. Expanding the output the the **`Router`**, we can see it contains a `NetMQMessage`. We [expect](https://netmq.readthedocs.io/en/latest/router-dealer/) this message to be composed of 3 frames: an address (in this case the address of the client that sent the message), an empty delimiter frame and the message content. To make sense of the message, let's expose the `Buffer` `byte[]` of the `First` frame. Add an **`Index (Expressions)`** node the the first frame buffer and set its `Value` to 1 to access the unique address ID. Add a [**`ConvertToString`**](xref:Bonsai.ZeroMQ.ConvertToString) to the `Last` frame. 
+
+:::workflow
+![Router message parsing](~/workflows/router-message-parsing.bonsai)
+:::
+
+Running the workflow and then triggering client messages with key presses, we should see a unique `byte` value for each client in the **`Index`** node output and a corresponding `string` in the **`ConvertToString`** node output.
