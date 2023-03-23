@@ -128,3 +128,24 @@ Create a **`KeyDown`** node followed by a **`SelectMany`**. Set the `Filter` for
 :::workflow
 ![SelectMany detour](~/workflows/select-many-detour.bonsai)
 :::
+
+Run the project and inspect the output of the **`SelectMany`** node. If no client messages are triggered and we press ‘A’ to trigger the **`SelectMany`** nothing will be returned. If we trigger a single client and press ‘A’ again **`SelectMany`** gives us the address of that client. If we trigger a second client and press ‘A’ we get the addresses of these first two clients in sequence, and so on if we add the third client. Whenever we press ‘A’ we get a sequence of all the connected client addresses. Every time we trigger **`SelectMany`** with a **`KeyDown`** we generate a new sequence that immediately subscribes to **`ClientAddresses`**, a **`ReplaySubject`** which replays all our unique client addresses into the sequence. We could keep initiating these new sequences by continually pressing ‘A’ and if a new client address were to be added then all these sequences would report the new address (you can test this by connecting the **`SusbcribeSubject`** directly to the workflow output and deleting **`KeyUp`** and **`TakeUntil`**). Instead, we want to complete each new sequence once it has given us all the client addresses so we use an arbitrary event (releasing the key that initiated the sequence) to trigger **`TakeUntil`** and close the sequence. The overall effect is something similar to a loop that iterates over all client addresses every time we request it with a key press. This is the general structure of what we want to achieve next in our server logic to broadcast messages back to all connected clients.
+
+## All client broadcast
+To apply the logic of the **`SelectMany`** example to server broadcast, we need something to trigger the **`SelectMany`** sequence creation, and something to trigger termination. We already have a trigger for sequence creation in the output of the **`Router`** since we want to run our **`SelectMany`** sequence every time a client message is received. For our sequence temination trigger, we want something that is guaranteed to fire after the server receives a client message, but before the next message is received so that our **`SelectMany`** sequence for each message responds only to that particular message. A simple solution is therefore to use the arrival of the next message as our sequence termination trigger.
+
+To implement this, add a **`Skip`** node after the **`Router`** in a separate branch and connect this to a **`PublishSubject`**. Ensure that the **`Skip`** node's `Count` property is set to 1, and name the **`PublishSubject`** 'NextMessage'.
+
+:::workflow
+![Server next message](~/workflows/server-next-message.bonsai)
+:::
+
+The logic here is that we use **`Skip`** to create a sequence that lags exactly 1 message behind the **`Router`** sequence of received messages, i.e. when the first message is received, **`NextMessage`** will not produce a result until the second message is received. We can then use this inside our **`SelectMany`** logic for generating server messages. Add a **`SelectMany`** node after the **`Router`** in a separate branch and name it ‘SelectAllClients’.
+
+Inside the **`SelectMany`** node, create 2 **`SubscribeSubject`** nodes and link them to the **`ClientAddresses`** and **`NextMessage`** subjects. Connect the **`ClientAddresses`** subscription to the workflow output via a **`TakeUntil`** node and use **`NextMessage`** as the second input. Now, our `SelectAllClients` will produce a sequence of all unique client addresses every time the server receives a message. Connect the output of `SelectAllClients` to a **`WithLatestFrom`** with the **`Router`** as its second input. In this context **`WithLatestFrom`** combines each client address from `SelectAllClients` with the most recent received message. The result is that when a message is received from the client, we produce several copies of the message 'addressed' to each connected client.
+
+:::workflow
+![Select all clients and package message](~/workflows/select-all-clients-format.bonsai)
+:::
+
+To send these messages back to our clients, we will modify the logic in our previous **`BounceBack`** node. This time, we'll create a **`SelectMany`** called `BroadcastAll` that takes the `byte[]` addresses from `SelectAllClients` and reformats the original message with this address as the first frame. This is multicast back into the router to send the original address back to all clients.
