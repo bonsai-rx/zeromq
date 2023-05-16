@@ -76,7 +76,6 @@ namespace Bonsai.ZeroMQ
         {
             return Observable.Create<NetMQMessage>(observer =>
             {
-                var pendingRequests = 1;
                 var dealer = new DealerSocket(ConnectionString);
                 var poller = new NetMQPoller { dealer };
                 dealer.ReceiveReady += (sender, e) =>
@@ -87,10 +86,6 @@ namespace Bonsai.ZeroMQ
                         {
                             var response = e.Socket.ReceiveMultipartMessage();
                             observer.OnNext(response);
-                            if (Interlocked.Decrement(ref pendingRequests) <= 0)
-                            {
-                                observer.OnCompleted();
-                            }
                         }
                     }
                 };
@@ -98,15 +93,11 @@ namespace Bonsai.ZeroMQ
                     request =>
                     {
                         sendRequest(dealer.SendMoreFrameEmpty(), request);
-                        Interlocked.Increment(ref pendingRequests);
                     },
                     observer.OnError,
                     () =>
                     {
-                        if (Interlocked.Decrement(ref pendingRequests) <= 0)
-                        {
-                            observer.OnCompleted();
-                        }
+                        observer.OnCompleted();
                     });
                 poller.RunAsync();
                 return new CompositeDisposable
