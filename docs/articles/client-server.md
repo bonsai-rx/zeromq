@@ -145,7 +145,24 @@ The logic here is that we use **`Skip`** to create a sequence that lags exactly 
 Inside the **`SelectMany`** node, create 2 **`SubscribeSubject`** nodes and link them to the **`ClientAddresses`** and **`NextMessage`** subjects. Connect the **`ClientAddresses`** subscription to the workflow output via a **`TakeUntil`** node and use **`NextMessage`** as the second input. Now, our `SelectAllClients` will produce a sequence of all unique client addresses every time the server receives a message. Connect the output of `SelectAllClients` to a **`WithLatestFrom`** with the **`Router`** as its second input. In this context **`WithLatestFrom`** combines each client address from `SelectAllClients` with the most recent received message. The result is that when a message is received from the client, we produce several copies of the message 'addressed' to each connected client.
 
 :::workflow
-![Select all clients and package message](~/workflows/select-all-clients-format.bonsai)
+![Select all clients and package message](~/workflows/format-select-all-clients.bonsai)
 :::
 
 To send these messages back to our clients, we will modify the logic in our previous **`BounceBack`** node. This time, we'll create a **`SelectMany`** called `BroadcastAll` that takes the `byte[]` addresses from `SelectAllClients` and reformats the original message with this address as the first frame. This is multicast back into the router to send the original address back to all clients.
+
+Inside `BroadcastAll` the source consists of a `Tuple` of our key-value-pair of client ID / address and the received message. We take the `byte[]` address and use **`ConvertToFrame`** to convert it to a `NetMQFrame` and then merge it with the empty delimiter and the message payload. As before, we **`Take`** 3 elements to close the message construction stream, convert to a `NetMQMessage` with **`ToMessage`** and then **`Multicast`** into `RouterMessages`. If you run the workflow now you should see that each time a **`Dealer`** produces a message, all clients receive a copy of that message.
+
+:::workflow
+![Broadcast to all clients](~/workflows/broadcast-all-clients.bonsai)
+:::
+
+## Leave-one-out broadcast
+This is getting pretty close to our original network architecture goal but there is still some redundancy present. When client 1 sends a message to the server, clients 1, 2 and 3 all receive a copy of that message back from the server. this is fine for clients 2 and 3 as they are not aware of client 1's messages without server communication; but client 1 does not need this message copy since it already originated the message. Our goal then is that the server should send message copies back to all clients except the client that originated message.
+
+To do this, we'll create a **`Condition`** before `BroadcastAll` to filter only non sender clients called `NonSenderClients`. Inside `NonSenderClients` expose the `byte` corresponding to the client ID and index 1 of the first frame of the `NetMQMessage` from `Source1`. **`Zip`** these together and use **`NotEqual`** to compare the client ID of the message with the existing clients and discard where the IDs are the same.
+
+:::workflow
+![Broadcast to non-senders](~/workflows/broadcast-non-sender-clients.bonsai)
+:::
+
+Running the workflow you should see that we have now achieved the desired architecture. When a client **`Dealer`** sends a message, it is broadcast to all other joined clients except for itself.
