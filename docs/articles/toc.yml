@@ -20,3 +20,5 @@
       href: proxy.md
 - name: Recipes
   href: recipes.md
+- name: Client-Server Tutorial
+  href: client-server.md
