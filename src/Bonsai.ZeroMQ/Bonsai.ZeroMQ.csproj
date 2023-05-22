@@ -21,8 +21,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bonsai.Core" Version="2.7.0" />
-    <PackageReference Include="NetMQ" Version="4.0.1.8" />
+    <PackageReference Include="Bonsai.Core" Version="2.7.3" />
+    <PackageReference Include="NetMQ" Version="4.0.1.12" />
   </ItemGroup>
 
 </Project>
