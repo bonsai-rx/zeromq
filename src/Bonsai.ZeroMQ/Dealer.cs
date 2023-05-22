@@ -90,15 +90,9 @@ namespace Bonsai.ZeroMQ
                     }
                 };
                 var sourceObserver = Observer.Create<TSource>(
-                    request =>
-                    {
-                        sendRequest(dealer.SendMoreFrameEmpty(), request);
-                    },
+                    request => sendRequest(dealer.SendMoreFrameEmpty(), request),
                     observer.OnError,
-                    () =>
-                    {
-                        observer.OnCompleted();
-                    });
+                    () => { });
                 poller.RunAsync();
                 return new CompositeDisposable
                 {
