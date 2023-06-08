@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.7.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:zmq="clr-namespace:Bonsai.ZeroMQ;assembly=Bonsai.ZeroMQ"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timer">
+          <rx:DueTime>PT0S</rx:DueTime>
+          <rx:Period>PT1S</rx:Period>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Format">
+        <Format>timer1:{0}</Format>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:Publisher">
+          <zmq:ConnectionString>&gt;tcp://localhost:1234</zmq:ConnectionString>
+          <zmq:Topic>Timer1</zmq:Topic>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timer">
+          <rx:DueTime>PT0S</rx:DueTime>
+          <rx:Period>PT0.5S</rx:Period>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Format">
+        <Format>timer2:{0}</Format>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:Publisher">
+          <zmq:ConnectionString>&gt;tcp://localhost:1234</zmq:ConnectionString>
+          <zmq:Topic>Timer2</zmq:Topic>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:Subscriber">
+          <zmq:ConnectionString>&gt;tcp://localhost:5678</zmq:ConnectionString>
+          <zmq:Topic>Timer1</zmq:Topic>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Last</Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:ConvertToString" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:Subscriber">
+          <zmq:ConnectionString>&gt;tcp://localhost:5678</zmq:ConnectionString>
+          <zmq:Topic />
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Last</Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:ConvertToString" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:ProxyFrontend">
+          <zmq:ConnectionString>@tcp://localhost:1234</zmq:ConnectionString>
+          <zmq:SocketType>XSubscriber</zmq:SocketType>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="zmq:ProxyBackend">
+          <zmq:ConnectionString>@tcp://localhost:5678</zmq:ConnectionString>
+          <zmq:SocketType>XPublisher</zmq:SocketType>
+        </Combinator>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="1" To="2" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="6" To="7" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="9" To="10" Label="Source1" />
+      <Edge From="10" To="11" Label="Source1" />
+      <Edge From="12" To="13" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

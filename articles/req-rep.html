@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Request-Response </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Request-Response ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    <meta property="docfx:newtab" content="true">
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="req-rep">
+<h1 id="request-response">Request-Response</h1>
+
+<p>The request-response (req-rep) pattern is used to connect a set of clients to a set of services. It can also be seen as a form of remote procedure call and a simple task distribution pattern.</p>
+<pre><code class="lang-mermaid">graph LR
+    C(Client)
+    C --&gt;|REQ| D(Server)
+    D --&gt;|REP| C
+</code></pre>
+<p>On the client side, messages containing the details of each procedure call are pushed by each client using a <a class="xref" href="../api/Bonsai.ZeroMQ.Request.html">Request</a> node. On the server side, a <a class="xref" href="../api/Bonsai.ZeroMQ.Response.html">Response</a> node is used to receive notifications of new requests. Responses can be evaluated using the <a class="xref" href="../api/Bonsai.ZeroMQ.SendResponse.html">SendResponse</a> operator.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>This pattern is strictly sequential: if multiple requests are sent to a <a class="xref" href="../api/Bonsai.ZeroMQ.Response.html">Response</a> socket, they will be handled by the server one at a time, in order of arrival. For asynchronous processing of requests, see the <a class="xref" href="router-dealer.html">Router-Dealer</a> pattern.</p>
+</div>
+<h3 id="example-simple-request-response"><strong>Example:</strong> Simple request-response</h3>
+<p>In the example below, a periodic timer sends counter updates as a request to the server. The server replies by formatting the input string with the prefix <code>reply</code>.</p>
+<div class="workflow"><p><img src="../workflows/req-rep.bonsai" alt="Req-Rep workflow"></p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/bonsai-rx/zeromq/blob/main/docs/articles/req-rep.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <!-- Mermaid -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js" integrity="sha384-LnGjpNDrP4cp7MIk4CpRa/lPNclrf839ryYVFx1T1mPSV3RGAZ7nlBa7pqcyGY/K" crossorigin="anonymous"></script>
+    <!-- Initialize Mermaid -->
+    <script>
+        mermaid.initialize({
+            startOnLoad: false
+        });
+        mermaid.init(undefined, ".lang-mermaid");
+    </script>  </body>
+</html>
