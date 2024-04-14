@@ -11,7 +11,8 @@
       ],
       "dest": "api",
       "disableGitFeatures": false,
-      "disableDefaultFilter": false
+      "disableDefaultFilter": false,
+      "filter": "filter.yml"
     }
   ],
   "build": {
@@ -28,6 +29,12 @@
           "articles/**/toc.yml",
           "toc.yml",
           "*.md"
+        ]
+      },
+      {
+        "exclude": [
+          "_site/**",
+          "filter.yml"
         ]
       }
     ],
@@ -53,8 +60,12 @@
       }
     ],
     "globalMetadata": {
+      "_appName": "Bonsai - ZeroMQ",
+      "_appTitle": "Bonsai.ZeroMQ",
+      "_appFooter": "&copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href=\"https://dotnet.github.io/docfx\">docfx</a>",
       "_enableNewTab": true,
       "_gitContribute": {
+        "repo": "https://github.com/bonsai-rx/zeromq",
         "branch": "main",
         "apiSpecFolder": "docs/apidoc"
       }
@@ -64,7 +75,9 @@
     "fileMetadataFiles": [],
     "template": [
       "default",
-      "templates/html"
+      "modern",
+      "bonsai/template",
+      "template"
     ],
     "postProcessors": [ "ExtractSearchIndex" ],
     "markdownEngineName": "markdig",
