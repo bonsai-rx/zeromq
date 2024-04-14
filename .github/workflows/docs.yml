@@ -25,7 +25,7 @@ jobs:
         run: msbuild -t:restore src\Bonsai.ZeroMQ.sln
 
       - name: Build Solution
-        run: msbuild src/Bonsai.ML.sln /p:Configuration=Release
+        run: msbuild src/Bonsai.ZeroMQ.sln /p:Configuration=Release
         
       - name: Setup DocFX
         run: dotnet tool restore
