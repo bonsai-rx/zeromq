@@ -1,4 +1,4 @@
-- ../index.md
+- href: ../index.md
 - name: Patterns
 - href: patterns.md
 - href: pub-sub.md
