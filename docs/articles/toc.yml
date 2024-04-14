@@ -1,22 +1,10 @@
-- name: Getting Started
-  href: intro.md
-  items:
-    - name: Quickstart
-      href: intro.md
+- ../index.md
 - name: Patterns
-  href: patterns.md
-  items:
-    - name: Overview
-      href: patterns.md
-    - name: Publish-Subscribe
-      href: pub-sub.md
-    - name: Request-Response
-      href: req-rep.md
-    - name: Router-Dealer
-      href: router-dealer.md
-    - name: Push-Pull
-      href: push-pull.md
-    - name: Proxy
-      href: proxy.md
+- href: patterns.md
+- href: pub-sub.md
+- href: req-rep.md
+- href: router-dealer.md
+- href: push-pull.md
+- href: proxy.md
 - name: Recipes
-  href: recipes.md
+- href: recipes.md
