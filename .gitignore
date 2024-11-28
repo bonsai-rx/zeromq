@@ -1,12 +1,2 @@
-.vs
-.venv
-bin
-obj
-Packages
-*.orig
-*.user
-*.suo
-*.exe
-*.exe.settings
-*.exe.old
-*.dll
+.vs/
+/artifacts/

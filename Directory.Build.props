@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <Authors>Bonsai</Authors>
+    <Copyright>Copyright © Bonsai Foundation CIC and Contributors 2022</Copyright>
+    <PackageProjectUrl>https://github.com/bonsai-rx/zeromq</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bonsai-rx/zeromq.git</RepositoryUrl>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <PackageIcon>icon.png</PackageIcon>
+    <IncludeSymbols>true</IncludeSymbols>
+    <RepositoryType>git</RepositoryType>
+    <VersionPrefix>0.2.0</VersionPrefix>
+    <LangVersion>10.0</LangVersion>
+    <Features>strict</Features>
+  </PropertyGroup>
+  
+  <Import Project="build/Version.props" />
+
+  <ItemGroup>
+    <Content Include="..\..\LICENSE" PackagePath="/" />
+    <Content Include="..\..\icon.png" PackagePath="/" />
+  </ItemGroup>
+</Project>
