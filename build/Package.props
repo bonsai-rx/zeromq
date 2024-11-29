@@ -7,6 +7,7 @@
     <PackageType>Dependency;BonsaiLibrary</PackageType>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <RepositoryType>git</RepositoryType>
@@ -15,5 +16,6 @@
   <ItemGroup>
     <Content Include="..\..\LICENSE" PackagePath="/" />
     <Content Include="..\..\icon.png" PackagePath="/" />
+    <Content Include="..\..\README.md" PackagePath="/" />
   </ItemGroup>
 </Project>
