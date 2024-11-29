@@ -4,6 +4,7 @@
     <Copyright>Copyright © Bonsai Foundation CIC and Contributors 2022</Copyright>
     <PackageProjectUrl>https://github.com/bonsai-rx/zeromq</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bonsai-rx/zeromq.git</RepositoryUrl>
+    <PackageType>Dependency;BonsaiLibrary</PackageType>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
