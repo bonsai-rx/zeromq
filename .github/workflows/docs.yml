@@ -1,8 +1,17 @@
-# Builds and publishes the documentation website to gh-pages branch
+# Builds and publishes the documentation website
 name: Build docs
 
 on:
   workflow_dispatch:
+
+concurrency:
+  group: docs
+  cancel-in-progress: true
+
+permissions:
+  # Both required by actions/deploy-pages
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -37,6 +46,8 @@ jobs:
 
       - name: Upload GitHub Pages Artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_site
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
