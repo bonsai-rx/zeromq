@@ -1,23 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Authors>Bonsai</Authors>
     <Title>Bonsai - ZeroMQ Library</Title>
     <Description>Bonsai Library containing interfaces for real-time asynchronous streaming of messages using ZeroMQ.</Description>
-    <Copyright>Copyright © Bonsai Foundation CIC 2022</Copyright>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <ProjectUrl>https://github.com/bonsai-rx/zeromq</ProjectUrl>
-    <PackageLicenseUrl>https://github.com/bonsai-rx/zeromq/blob/main/LICENSE</PackageLicenseUrl>
-    <PackageIconUrl>https://bonsai-rx.org/assets/images/bonsai.png</PackageIconUrl>
-    <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
     <PackageTags>Bonsai Rx ZeroMQ zmq Networking</PackageTags>
-    <IncludeSymbols Condition="'$(Configuration)'=='Release'">true</IncludeSymbols>
-    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>net472</TargetFramework>
-    <LangVersion>8.0</LangVersion>
-    <Features>strict</Features>
-    <Version>0.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,32 +1,32 @@
-# Builds and publishes the documentation website to gh-pages branch
+# Builds and publishes the documentation website
 name: Build docs
 
 on:
   workflow_dispatch:
+
+concurrency:
+  group: docs
+  cancel-in-progress: true
+
+permissions:
+  # Both required by actions/deploy-pages
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: recursive
 
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v4.0.0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.x
+          dotnet-version: 8.x
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-        
-      - name: Restore NuGet Packages
-        run: msbuild -t:restore src\Bonsai.ZeroMQ.sln
-
-      - name: Build Solution
-        run: msbuild src/Bonsai.ZeroMQ.sln /p:Configuration=Release
-        
       - name: Setup DocFX
         run: dotnet tool restore
 
@@ -34,14 +34,20 @@ jobs:
         working-directory: .bonsai
         run: ./Setup.ps1
         
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+        
       - name: Build Documentation
         working-directory: docs
         run: ./build.ps1
 
-      - name: Publish to github pages
-        uses: peaceiris/actions-gh-pages@v3.9.3
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_site
-          publish_branch: gh-pages
-          force_orphan: true
+          path: docs/_site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
