@@ -73,13 +73,13 @@ So far our network is rather one-sided. We can send client messages to the serve
 ![Address key-value pair](~/workflows/address-kvp.bonsai)
 :::
 
-Every time the [**`Router`**](xref:Bonsai.ZeroMQ.Router) receives a message, the [**`Zip`**](xref:Bonsai.Reactive.Zip) will create a `Tuple` that can be thought of as a key-value pair, with the unique `byte` address of the client as the key, and the full `byte[]` address used by ZeroMQ for routing as the value. Next, add a [**`DistinctBy`**](xref:Bonsai.Reactive.DisctinctBy) node after the [**`Zip`**](xref:Bonsai.Reactive.Zip) and set the `KeySelector` property to the `byte` value (`Item1`).
+Every time the [**`Router`**](xref:Bonsai.ZeroMQ.Router) receives a message, the [**`Zip`**](xref:Bonsai.Reactive.Zip) will create a `Tuple` that can be thought of as a key-value pair, with the unique `byte` address of the client as the key, and the full `byte[]` address used by ZeroMQ for routing as the value. Next, add a [**`DistinctBy`**](xref:Bonsai.Reactive.DistinctBy) node after the [**`Zip`**](xref:Bonsai.Reactive.Zip) and set the `KeySelector` property to the `byte` value (`Item1`).
 
 :::workflow
 ![Unique key-value pair](~/workflows/unique-kvp.bonsai)
 :::
 
-The [**`DistinctBy`**](xref:Bonsai.Reactive.DisctinctBy) node filters the output of [**`Zip`**](xref:Bonsai.Reactive.Zip) according to the unique `byte` value and produces a sequence containing only the distinct – or ‘new’ – values produced by [**`Zip`**](xref:Bonsai.Reactive.Zip). The output of [**`DistinctBy`**](xref:Bonsai.Reactive.DisctinctBy) will therefore effectively be a sequence of unique client addresses corresponding to each connected client. We also need to store these unique values and make them available to other parts of the Bonsai workflow. Add a [**`ReplaySubject`**](xref:Bonsai.Reactive.ReplaySubject) node after [**`DistinctBy`**](xref:Bonsai.Reactive.DisctinctBy) and name it ‘ClientAddresses’. 
+The [**`DistinctBy`**](xref:Bonsai.Reactive.DistinctBy) node filters the output of [**`Zip`**](xref:Bonsai.Reactive.Zip) according to the unique `byte` value and produces a sequence containing only the distinct – or ‘new’ – values produced by [**`Zip`**](xref:Bonsai.Reactive.Zip). The output of [**`DistinctBy`**](xref:Bonsai.Reactive.DistinctBy) will therefore effectively be a sequence of unique client addresses corresponding to each connected client. We also need to store these unique values and make them available to other parts of the Bonsai workflow. Add a [**`ReplaySubject`**](xref:Bonsai.Reactive.ReplaySubject) node after [**`DistinctBy`**](xref:Bonsai.Reactive.DistinctBy) and name it ‘ClientAddresses’. 
 
 :::workflow
 ![Address ReplaySubject](~/workflows/address-replay-subject.bonsai)
