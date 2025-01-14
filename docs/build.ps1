@@ -1,2 +1,2 @@
-.\bonsai\modules\Export-Image.ps1 "..\src\Bonsai.ZeroMQ\bin\Release\net472"
+.\bonsai\modules\Export-Image.ps1 "..\artifacts\bin\Bonsai.ZeroMQ\release"
 dotnet docfx @args
