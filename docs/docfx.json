@@ -10,7 +10,9 @@
         }
       ],
       "dest": "api",
-      "filter": "filter.yml"
+      "filter": "filter.yml",
+      "enumSortOrder": "declaringOrder",
+      "memberLayout": "separatePages"
     }
   ],
   "build": {
