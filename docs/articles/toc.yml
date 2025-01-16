@@ -7,6 +7,6 @@
 - href: push-pull.md
 - href: proxy.md
 - name: Recipes
-  href: recipes.md
-- name: Client-Server Tutorial
-  href: client-server.md
+- href: recipes.md
+- name: Tutorials
+- href: client-server.md

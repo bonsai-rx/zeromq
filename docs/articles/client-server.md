@@ -3,7 +3,7 @@ uid: client-server
 title: "Client-Server"
 ---
 
-Client-Server Tutorial
+Client-server tutorial
 ======================
 
 The Bonsai.ZeroMQ package allows us to harness the powerful [ZeroMQ](https://zeromq.org/) library to build networked applications in Bonsai. Applications could include:
