@@ -36,11 +36,11 @@ ZeroMQ provides a number of socket types that could be used to achieve something
 
 ## Basic client
 To begin with, we’ll create a simple client that sends basic messages on a network. In a new Bonsai project:
-- Add a [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) node. 
+- Add a [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) operator. 
 - In the `ConnectionString` property, set `Address`: localhost:5557, `Action`: Connect, `Protocol`: TCP.
 
 > [!Note]
-> In Bonsai.ZeroMQ, the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) can have two functions based on its inputs. On its own, as above, the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) node creates a Dealer socket that listens for messages on the specified network. With the properties specified, we are asking our [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) to listen for messages on the local machine on port 5557 using the TCP protocol. We use the ‘Connect’ argument for the `SocketConnection` property to tell the dealer that it will connect to a static part of the network with a known IP address, in this case the server which we will implement later.
+> In Bonsai.ZeroMQ, the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) can have two functions based on its inputs. On its own, as above, the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) operator creates a Dealer socket that listens for messages on the specified network. With the properties specified, we are asking our [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) to listen for messages on the local machine on port 5557 using the TCP protocol. We use the ‘Connect’ argument for the `SocketConnection` property to tell the dealer that it will connect to a static part of the network with a known IP address, in this case the server which we will implement later.
 
 If we add inputs to the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer), it will act as both a sender and receiver of messages on the network. 
 - Before the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) operator add a [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown). 
@@ -50,7 +50,7 @@ If we add inputs to the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer), it will act as bo
 ![Basic Dealer input](~/workflows/dealer-basic-input.bonsai)
 :::
 
-- In the node properties, set the [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) `Filter` to the ‘1’ key.
+- In the operator properties, set the [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) `Filter` to the ‘1’ key.
 - Set the [`String`](xref:Bonsai.Expressions.StringProperty) `Value` to ‘Client1’. 
 
 If we run the Bonsai project now, the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) will continue listening for incoming messages on the network, but every time the ‘1’ key is pressed a message containing the string ‘Client1’ will be sent from the socket.
@@ -66,25 +66,25 @@ If we run the Bonsai project now, the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) will
 
 ## Basic server
 Now that we have our client pool set up and sending messages, let’s implement a server to listen for those messages. 
-- Add a [`Router`](xref:Bonsai.ZeroMQ.Router) node to the project and set its properties to match the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) sockets we already added so that it is running on the same network. 
+- Add a [`Router`](xref:Bonsai.ZeroMQ.Router) operator to the project and set its properties to match the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) sockets we already added so that it is running on the same network. 
 - As the [`Router`](xref:Bonsai.ZeroMQ.Router) is acting as server and will be the ‘static’ part of the network, set its `Action` to ‘Bind’.
 
-As with the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) node, a [`Router`](xref:Bonsai.ZeroMQ.Router) node without any input will simply listen for messages on the network and not send anything in return. If we run the project now and monitor the output of the [`Router`](xref:Bonsai.ZeroMQ.Router) node, we'll see that each time the client sends a message triggered by its associated key press we get a `ResponseContext` produced at the [`Router`](xref:Bonsai.ZeroMQ.Router). Expanding the output the the [`Router`](xref:Bonsai.ZeroMQ.Router), we can see it contains a `NetMQMessage`. We [expect](https://netmq.readthedocs.io/en/latest/router-dealer/) this message to be composed of 3 frames: an address (in this case the address of the client that sent the message), an empty delimiter frame and the message content. 
+As with the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) operator, a [`Router`](xref:Bonsai.ZeroMQ.Router) operator without any input will simply listen for messages on the network and not send anything in return. If we run the project now and monitor the output of the [`Router`](xref:Bonsai.ZeroMQ.Router) operator, we'll see that each time the client sends a message triggered by its associated key press we get a `ResponseContext` produced at the [`Router`](xref:Bonsai.ZeroMQ.Router). Expanding the output the the [`Router`](xref:Bonsai.ZeroMQ.Router), we can see it contains a `NetMQMessage`. We [expect](https://netmq.readthedocs.io/en/latest/router-dealer/) this message to be composed of 3 frames: an address (in this case the address of the client that sent the message), an empty delimiter frame and the message content. 
 
 - Expose the `Buffer` `byte[]` of the `First` frame. 
-- Add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) node the the first frame buffer and set its `Value` to 1 to access the unique address ID. 
+- Add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator the the first frame buffer and set its `Value` to 1 to access the unique address ID. 
 - Add a [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) to the `Last` frame. 
 
 :::workflow
 ![Router message parsing](~/workflows/router-message-parsing.bonsai)
 :::
 
-Running the workflow and then triggering client messages with key presses, we should see a unique `byte` value for each client in the [`Index`](xref:Bonsai.Expressions.IndexBuilder) node output and a corresponding `string` in the [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) node output.
+Running the workflow and then triggering client messages with key presses, we should see a unique `byte` value for each client in the [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator output and a corresponding `string` in the [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) operator output.
 
 ## Client address tracking
 So far our network is rather one-sided. We can send client messages to the server which can in turn receive and parse them, but currently nothing is relayed back to the clients. The first goal for server feedback is that any time a client message is received, the server sends this message back to all connected clients. To do this, we first need a way of keeping track of all active clients. 
 
-- Add a [`Zip`](xref:Bonsai.Reactive.Zip) node to the [`Index`](xref:Bonsai.Expressions.IndexBuilder) node and connect the `byte[]` `Buffer` as the second input.
+- Add a [`Zip`](xref:Bonsai.Reactive.Zip) operator to the [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator and connect the `byte[]` `Buffer` as the second input.
 
 :::workflow
 ![Address key-value pair](~/workflows/address-kvp.bonsai)
@@ -92,15 +92,15 @@ So far our network is rather one-sided. We can send client messages to the serve
 
 Every time the [`Router`](xref:Bonsai.ZeroMQ.Router) receives a message, the [`Zip`](xref:Bonsai.Reactive.Zip) will create a `Tuple` that can be thought of as a key-value pair, with the unique `byte` address of the client as the key, and the full `byte[]` address used by ZeroMQ for routing as the value. 
 
-- Add a [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) node after the [`Zip`](xref:Bonsai.Reactive.Zip) and set the `KeySelector` property to the `byte` value (`Item1`).
+- Add a [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) operator after the [`Zip`](xref:Bonsai.Reactive.Zip) and set the `KeySelector` property to the `byte` value (`Item1`).
 
 :::workflow
 ![Unique key-value pair](~/workflows/unique-kvp.bonsai)
 :::
 
-The [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) node filters the output of [`Zip`](xref:Bonsai.Reactive.Zip) according to the unique `byte` value and produces a sequence containing only the distinct – or ‘new’ – values produced by [`Zip`](xref:Bonsai.Reactive.Zip). The output of [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) will therefore effectively be a sequence of unique client addresses corresponding to each connected client. We also need to store these unique values and make them available to other parts of the Bonsai workflow. 
+The [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) operator filters the output of [`Zip`](xref:Bonsai.Reactive.Zip) according to the unique `byte` value and produces a sequence containing only the distinct – or ‘new’ – values produced by [`Zip`](xref:Bonsai.Reactive.Zip). The output of [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) will therefore effectively be a sequence of unique client addresses corresponding to each connected client. We also need to store these unique values and make them available to other parts of the Bonsai workflow. 
 
-- Add a [`ReplaySubject`](xref:Bonsai.Reactive.ReplaySubject) node after [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) and name it ‘ClientAddresses’. 
+- Add a [`ReplaySubject`](xref:Bonsai.Reactive.ReplaySubject) operator after [`DistinctBy`](xref:Bonsai.Reactive.DistinctBy) and name it ‘ClientAddresses’. 
 
 :::workflow
 ![Address ReplaySubject](~/workflows/address-replay-subject.bonsai)
@@ -112,13 +112,13 @@ A [`ReplaySubject`](xref:Bonsai.Reactive.ReplaySubject) has the useful feature t
 Eventually, we will use these unique client addresses to route server messages back to specific client. For now, we'll implement a more basic approach where the server just sends messages back to the client that originally sent them. The Bonsai ZeroMQ library provides a convenient operator for this task in the form of [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse). 
 
 - Add a [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator after the [`Router`](xref:Bonsai.ZeroMQ.Router) in a separate branch.
-- Inside (double-click on [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse)) add a [`String`](xref:Bonsai.Expressions.StringProperty) node with a generic response value like `ServerResponse` after the `Source` operator. 
+- Inside (double-click on [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse)) add a [`String`](xref:Bonsai.Expressions.StringProperty) operator with a generic response value like `ServerResponse` after the `Source` operator. 
 
 :::workflow
 ![Basic server response](~/workflows/server-basic-response.bonsai)
 :::
 
-The [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) node has a couple of interesting properties which may not be immediately obvious from this simple example. First, this node always transmits its response back to the ZeroMQ socket that initiated the request (in this case one of our [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) clients) and we therefore do not need to specify an address in its processing logic. Second, the internal flow of [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) logic is computed asynchronously. This is very useful for responses that require more intensive computation and allows a [`Router`](xref:Bonsai.ZeroMQ.Router) to deal with frequent incoming [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) requests efficiently. 
+The [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator has a couple of interesting properties which may not be immediately obvious from this simple example. First, this operator always transmits its response back to the ZeroMQ socket that initiated the request (in this case one of our [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) clients) and we therefore do not need to specify an address in its processing logic. Second, the internal flow of [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) logic is computed asynchronously. This is very useful for responses that require more intensive computation and allows a [`Router`](xref:Bonsai.ZeroMQ.Router) to deal with frequent incoming [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) requests efficiently. 
 
 > [!Note]
 > Imagine, for example, that our Dealer sockets were sending video snippets to a Router server that is tasked with doing some processing of the video and returning the results back to the Dealers. If the responses were not computed in an asynchronous manner we would start to incur a bottleneck on the router if there were many connected Dealers or frequent Dealer requests.
@@ -126,15 +126,15 @@ The [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) node has a couple of inter
 Running this workflow, you should see a 'bounceback' where any [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) client that sends a message receives a reply from the [`Router`](xref:Bonsai.ZeroMQ.Router) server. However, in order to address these messages to specific other clients we need to take a slightly different approach. 
 
 - Delete the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) and [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) branches.
-- Replace with a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) called `BouceBack` that generates a bounceback message without using the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) node: 
+- Replace with a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) called `BouceBack` that generates a bounceback message without using the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator: 
 
 :::workflow
 ![Server message multicast](~/workflows/server-message-multicast.bonsai)
 :::
 
-We had to change quite a few things to modify this workflow so let's step through the general logic. The first thing to note is that since we are avoiding the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) node in this implementation we need to pass messages directly into the [`Router`](xref:Bonsai.ZeroMQ.Router). To do this we generate a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source with a `NetMQMessage` output type and connect it to the [`Router`](xref:Bonsai.ZeroMQ.Response) (can implement this by creating a [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) node, right-clicking it and creating a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source). This will change the output type of the [`Router`](xref:Bonsai.ZeroMQ.Router) node from a `ResponseContext` to a `NetMQMessage` so we need to make some modifications to how we process the stream.
+We had to change quite a few things to modify this workflow so let's step through the general logic. The first thing to note is that since we are avoiding the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator in this implementation we need to pass messages directly into the [`Router`](xref:Bonsai.ZeroMQ.Router). To do this we generate a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source with a `NetMQMessage` output type and connect it to the [`Router`](xref:Bonsai.ZeroMQ.Response) (can implement this by creating a [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) operator, right-clicking it and creating a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source). This will change the output type of the [`Router`](xref:Bonsai.ZeroMQ.Router) operator from a `ResponseContext` to a `NetMQMessage` so we need to make some modifications to how we process the stream.
 
-We want the [`Router`](xref:Bonsai.ZeroMQ.Router) to generate a reply message every time it receives a request from a [`Dealer`](xref:Bonsai.ZeroMQ.Dealer). Since we are now building this message ourselves instead of using [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse), we branch off the [`Router`](xref:Bonsai.ZeroMQ.Router) with a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) node. Inside, we split the `NetMQMessage` into its component `NetMQFrame` parts, taking the `First` frame for the address, using [`Index`](xref:Bonsai.Expressions.IndexBuilder) to grab the middle empty delimiter frame and creating a new `String` which we convert to a `NetMQFrame` for the message content. We [`Merge`](xref:Bonsai.Reactive.Merge) these component frames back together and use a [`Take`](xref:Bonsai.Reactive.Take) node (with count = 3) followed by [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage). The [`Take`](xref:Bonsai.Reactive.Take) node is particularly important here as 1) [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) will only complete the message once the observable stream is completed and 2) We need to close the observable anyway to complete the [`SelectMany`](xref:Bonsai.Reactive.SelectMany). Finally, we use a [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) to send our completed message to the [`Router`](xref:Bonsai.ZeroMQ.Router).
+We want the [`Router`](xref:Bonsai.ZeroMQ.Router) to generate a reply message every time it receives a request from a [`Dealer`](xref:Bonsai.ZeroMQ.Dealer). Since we are now building this message ourselves instead of using [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse), we branch off the [`Router`](xref:Bonsai.ZeroMQ.Router) with a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) operator. Inside, we split the `NetMQMessage` into its component `NetMQFrame` parts, taking the `First` frame for the address, using [`Index`](xref:Bonsai.Expressions.IndexBuilder) to grab the middle empty delimiter frame and creating a new `String` which we convert to a `NetMQFrame` for the message content. We [`Merge`](xref:Bonsai.Reactive.Merge) these component frames back together and use a [`Take`](xref:Bonsai.Reactive.Take) operator (with count = 3) followed by [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage). The [`Take`](xref:Bonsai.Reactive.Take) operator is particularly important here as 1) [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) will only complete the message once the observable stream is completed and 2) We need to close the observable anyway to complete the [`SelectMany`](xref:Bonsai.Reactive.SelectMany). Finally, we use a [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) to send our completed message to the [`Router`](xref:Bonsai.ZeroMQ.Router).
 
 If we run the workflow now, we should see the same behavior as before (server bounces message back to initiating client).
 
@@ -151,13 +151,13 @@ using a loop to send the message back to each client in turn. In a reactive / ob
 
 The [`SelectMany`](xref:Bonsai.Reactive.SelectMany) operator can be a tricky one to understand. Lee Campbell’s excellent [Introduction to Rx](http://introtorx.com/Content/v1.0.10621.0/08_Transformation.html#SelectMany) book does a good job of summarising its utility, suggesting we think of it as “from one, select many” or “from one, select zero or more”. In our case, we can think of [`SelectMany`](xref:Bonsai.Reactive.SelectMany) as a way to repeat some processing logic several times and feed the output of each repeat into a single sequence. More concretely, taking a single message and repeating the act of sending it several times for each client address. It is easier to show by example, so let’s set up a toy example in our project. 
 
-Create a [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) node followed by a [`SelectMany`](xref:Bonsai.Reactive.SelectMany). Set the `Filter` for the [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) to a key that hasn’t been assigned to a client yet – here I will use ‘A’. Inside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) node add a [`SubscribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) and set its subscription to the `ClientAddresses` subject we created earlier to replay unique client addresses. Add a [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) node after the [`SubscribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) and connect the output of [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) to the [`WorkflowOutput`](xref:Bonsai.Expressions.WorkflowOutputBuilder) (disconnecting the `Source` node). Finally, create a [`KeyUp`](xref:Bonsai.Windows.Input.KeyUp) node and connect it to [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil). Set the key `Filter` for [`KeyUp`](xref:Bonsai.Windows.Input.KeyUp) to the same as previously created [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) node outside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany).
+Create a [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) operator followed by a [`SelectMany`](xref:Bonsai.Reactive.SelectMany). Set the `Filter` for the [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) to a key that hasn’t been assigned to a client yet – here I will use ‘A’. Inside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) oeprator add a [`SubscribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) and set its subscription to the `ClientAddresses` subject we created earlier to replay unique client addresses. Add a [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) operator after the [`SubscribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) and connect the output of [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) to the [`WorkflowOutput`](xref:Bonsai.Expressions.WorkflowOutputBuilder) (disconnecting the `Source` operator). Finally, create a [`KeyUp`](xref:Bonsai.Windows.Input.KeyUp) operator and connect it to [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil). Set the key `Filter` for [`KeyUp`](xref:Bonsai.Windows.Input.KeyUp) to the same as previously created [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) operator outside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany).
 
 :::workflow
 ![SelectMany detour](~/workflows/select-many-detour.bonsai)
 :::
 
-Run the project and inspect the output of the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) node. If no client messages are triggered and we press ‘A’ to trigger the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) nothing will be returned. If we trigger a single client and press ‘A’ again [`SelectMany`](xref:Bonsai.Reactive.SelectMany) gives us the address of that client. If we trigger a second client and press ‘A’ we get the addresses of these first two clients in sequence, and so on if we add the third client. Whenever we press ‘A’ we get a sequence of all the connected client addresses. Every time we trigger [`SelectMany`](xref:Bonsai.Reactive.SelectMany) with a [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) we generate a new sequence that immediately subscribes to `ClientAddresses`, a [`ReplaySubject`](xref:Bonsai.Reactive.ReplaySubject) which replays all our unique client addresses into the sequence. We could keep initiating these new sequences by continually pressing ‘A’ and if a new client address were to be added then all these sequences would report the new address (you can test this by connecting the [`SusbcribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) directly to the workflow output and deleting [`KeyUp`](xref:Bonsai.Windows.Input.KeyUp) and [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil)). Instead, we want to complete each new sequence once it has given us all the client addresses so we use an arbitrary event (releasing the key that initiated the sequence) to trigger [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) and close the sequence. The overall effect is something similar to a loop that iterates over all client addresses every time we request it with a key press. This is the general structure of what we want to achieve next in our server logic to broadcast messages back to all connected clients.
+Run the project and inspect the output of the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) operator. If no client messages are triggered and we press ‘A’ to trigger the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) nothing will be returned. If we trigger a single client and press ‘A’ again [`SelectMany`](xref:Bonsai.Reactive.SelectMany) gives us the address of that client. If we trigger a second client and press ‘A’ we get the addresses of these first two clients in sequence, and so on if we add the third client. Whenever we press ‘A’ we get a sequence of all the connected client addresses. Every time we trigger [`SelectMany`](xref:Bonsai.Reactive.SelectMany) with a [`KeyDown`](xref:Bonsai.Windows.Input.KeyDown) we generate a new sequence that immediately subscribes to `ClientAddresses`, a [`ReplaySubject`](xref:Bonsai.Reactive.ReplaySubject) which replays all our unique client addresses into the sequence. We could keep initiating these new sequences by continually pressing ‘A’ and if a new client address were to be added then all these sequences would report the new address (you can test this by connecting the [`SusbcribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) directly to the workflow output and deleting [`KeyUp`](xref:Bonsai.Windows.Input.KeyUp) and [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil)). Instead, we want to complete each new sequence once it has given us all the client addresses so we use an arbitrary event (releasing the key that initiated the sequence) to trigger [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) and close the sequence. The overall effect is something similar to a loop that iterates over all client addresses every time we request it with a key press. This is the general structure of what we want to achieve next in our server logic to broadcast messages back to all connected clients.
 
 ## All client broadcast
 To apply the logic of the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) example to server broadcast, we need something to trigger the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) sequence creation, and something to trigger termination. We already have a trigger for sequence creation in the output of the [`Router`](xref:Bonsai.ZeroMQ.Router) since we want to run our [`SelectMany`](xref:Bonsai.Reactive.SelectMany) sequence every time a client message is received. For our sequence temination trigger, we want something that is guaranteed to fire after the server receives a client message, but before the next message is received so that our [`SelectMany`](xref:Bonsai.Reactive.SelectMany) sequence for each message responds only to that particular message. A simple solution is therefore to use the arrival of the next message as our sequence termination trigger.
@@ -171,9 +171,9 @@ To apply the logic of the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) exampl
 
 The logic here is that we use [`Skip`](xref:Bonsai.Reactive.Skip) to create a sequence that lags exactly 1 message behind the [`Router`](xref:Bonsai.ZeroMQ.Router) sequence of received messages, i.e. when the first message is received, `NextMessage` will not produce a result until the second message is received. We can then use this inside our [`SelectMany`](xref:Bonsai.Reactive.SelectMany) logic for generating server messages. 
 
-- Add a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) node after the [`Router`](xref:Bonsai.ZeroMQ.Router) in a separate branch and name it ‘SelectAllClients’.
-- Inside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) node, create 2 [`SubscribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) nodes and link them to the `ClientAddresses` and `NextMessage` subjects. 
-- Connect the `ClientAddresses` subscription to the workflow output via a [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) node and use `NextMessage` as the second input. 
+- Add a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) operator after the [`Router`](xref:Bonsai.ZeroMQ.Router) in a separate branch and name it ‘SelectAllClients’.
+- Inside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) operator, create 2 [`SubscribeSubject`](xref:Bonsai.Expressions.SubscribeSubject) operators and link them to the `ClientAddresses` and `NextMessage` subjects. 
+- Connect the `ClientAddresses` subscription to the workflow output via a [`TakeUntil`](xref:Bonsai.Reactive.TakeUntil) operator and use `NextMessage` as the second input. 
 
 Now, our `SelectAllClients` will produce a sequence of all unique client addresses every time the server receives a message. Connect the output of `SelectAllClients` to a [`WithLatestFrom`](xref:Bonsai.Reactive.WithLatestFrom) with the [`Router`](xref:Bonsai.ZeroMQ.Router) as its second input. In this context [`WithLatestFrom`](xref:Bonsai.Reactive.WithLatestFrom) combines each client address from `SelectAllClients` with the most recent received message. The result is that when a message is received from the client, we produce several copies of the message 'addressed' to each connected client.
 
@@ -181,7 +181,7 @@ Now, our `SelectAllClients` will produce a sequence of all unique client address
 ![Select all clients and package message](~/workflows/format-select-all-clients.bonsai)
 :::
 
-To send these messages back to our clients, we will modify the logic in our previous `BounceBack` node. 
+To send these messages back to our clients, we will modify the logic in our previous `BounceBack` operator. 
 
 - Create a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) called `BroadcastAll` that takes the `byte[]` addresses from `SelectAllClients` and reformats the original message with this address as the first frame. 
 - [`Multicast`](xref:Bonsai.Expressions.MulticastSubject) back into the router to send the original address back to all clients.
