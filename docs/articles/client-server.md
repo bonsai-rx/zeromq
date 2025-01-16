@@ -30,7 +30,7 @@ sequenceDiagram
 
 An important requirement to point out here is that our server should be choosy about which clients it broadcasts information to. If client 1 updates the server with its current state, that information needs to be sent to all other connected clients, but there is no need to send it back to client 1 as it already knows its own state and this feedback message would be redundant.
 
-ZeroMQ provides a number of socket types that could be used to achieve something approaching this architecture. The Router / Dealer socket pair acting as Server / Client has a couple of advantages for this design: 
+ZeroMQ provides a number of socket types that could be used to achieve something approaching this architecture. The @router-dealer socket pair acting as Server / Client has a couple of advantages for this design: 
 - Routers assign a unique address for each connected client allowing clients in turn to be addressed individually
 - Messages can be passed between Router / Dealer sockets without the requirement that a reply is received before the next message is sent, as is the case with the Request / Response socket pair.
 
