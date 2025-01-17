@@ -34,9 +34,7 @@
       {
         "files": [
           "tutorials/**.md",
-          "tutorials/**/toc.yml",
-          "toc.yml",
-          "*.md"
+          "tutorials/toc.yml"
         ]
       },
       {
