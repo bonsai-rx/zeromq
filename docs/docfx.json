@@ -32,6 +32,14 @@
         ]
       },
       {
+        "files": [
+          "tutorials/**.md",
+          "tutorials/**/toc.yml",
+          "toc.yml",
+          "*.md"
+        ]
+      },
+      {
         "exclude": [
           "_site/**",
           "filter.yml"
