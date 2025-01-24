@@ -72,7 +72,7 @@ Now that we have our client pool set up and sending messages, let’s implement 
 As with the [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) operator, a [`Router`](xref:Bonsai.ZeroMQ.Router) operator without any input will simply listen for messages on the network and not send anything in return. If we run the project now and monitor the output of the [`Router`](xref:Bonsai.ZeroMQ.Router) operator, we'll see that each time the client sends a message triggered by its associated key press we get a `ResponseContext` produced at the [`Router`](xref:Bonsai.ZeroMQ.Router). Expanding the output the [`Router`](xref:Bonsai.ZeroMQ.Router), we can see it contains a `NetMQMessage`. We [expect](https://netmq.readthedocs.io/en/latest/router-dealer/) this message to be composed of 3 frames: an address (in this case the address of the client that sent the message), an empty delimiter frame and the message content. 
 
 - Expose the `Buffer` `byte[]` of the `First` frame. 
-- Add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator the the first frame buffer and set its `Value` to 1 to access the unique address ID. 
+- Add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator the first frame buffer and set its `Value` to 1 to access the unique address ID. 
 - Add a [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) to the `Last` frame. 
 
 :::workflow
@@ -126,7 +126,15 @@ The [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator has a couple of i
 Running this workflow, you should see a 'bounceback' where any [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) client that sends a message receives a reply from the [`Router`](xref:Bonsai.ZeroMQ.Router) server. However, in order to address these messages to specific other clients we need to take a slightly different approach. 
 
 - Delete the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) and [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) branches.
-- Replace with a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) called `BouceBack` that generates a bounceback message without using the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator: 
+- Create a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source with a `NetMQMessage` output type and name it 'RouterMessages' (right-click on an operator with a `NetMQMessage` output type >> CreateSource >> BehaviorSubject). Connect it as an input to the [`Router`](xref:Bonsai.ZeroMQ.Router).
+- Delete the `Request.First` and `Buffer` outputs from [`Router`](xref:Bonsai.ZeroMQ.Router). Right-click on the [`Router`](xref:Bonsai.ZeroMQ.Router) and expose the `NetMQMessage` >> `First` >> `Buffer` output.
+- Add a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) called `BouceBack`. Connect [`Router`](xref:Bonsai.ZeroMQ.Router) to `BounceBack`.
+- Inside `BounceBack`, expose the `First` property of the `Source1` output.
+- On a separate branch, add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator with an index 'Value' of 1. Connect `Source1` as its input.
+- On a further separate branch, add a [`String`](xref:Bonsai.Expressions.StringProperty) operator with a 'Value' of 'ServerResponse'. Connect this to a [`ConvertToFrame`](xref:Bonsai.ZeroMQ.ConvertToFrame) operator. Connect `Source1` as an input to the [`String`](xref:Bonsai.Expressions.StringProperty).
+- Use [`Merge`](xref:Bonsai.Reactive.Merge) to combine the outputs of these 3 branches (`Source1.First`, `Index`, `ConvertToFrame`).
+- Convert the output to a `NetMQMessage` by connecting a [`Take`](xref:Bonsai.Reactive.Take) operator with a 'Count' property of 3 followed by a [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) operator. 
+- Finally, connect the output of [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) to a [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) targeting `RouterMessages`. Connect the [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) output to the `WorkflowOutput`.
 
 :::workflow
 ![Server message multicast](~/workflows/server-message-multicast.bonsai)
