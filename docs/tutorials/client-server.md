@@ -128,7 +128,14 @@ Running this workflow, you should see a 'bounceback' where any [`Dealer`](xref:B
 - Delete the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) and [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) branches.
 - Create a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source with a `NetMQMessage` output type and name it 'RouterMessages' (right-click on an operator with a `NetMQMessage` output type >> CreateSource >> BehaviorSubject). Connect it as an input to the [`Router`](xref:Bonsai.ZeroMQ.Router).
 - Delete the `Request.First` and `Buffer` outputs from [`Router`](xref:Bonsai.ZeroMQ.Router). Right-click on the [`Router`](xref:Bonsai.ZeroMQ.Router) and expose the `NetMQMessage` >> `First` >> `Buffer` output.
-- Add a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) called `BouceBack`. Connect [`Router`](xref:Bonsai.ZeroMQ.Router) to `BounceBack`.
+- Add a [`SelectMany`](xref:Bonsai.Reactive.SelectMany) called `BounceBack`. Connect [`Router`](xref:Bonsai.ZeroMQ.Router) to `BounceBack`.
+
+:::workflow
+![Server message multicast](~/workflows/server-message-multicast.bonsai)
+:::
+
+Since the output type of the [`Router`](xref:Bonsai.ZeroMQ.Router) operator has changed from a `ResponseContext` to a `NetMQMessage` (due to the change in its input) we made some modifications to how we process the stream.  Inside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) operator we will construct messages by splitting the `NetMQMessage` into its component `NetMQFrame` parts, extracting the relevant frames and merging them together.
+
 - Inside `BounceBack`, expose the `First` property of the `Source1` output.
 - On a separate branch, add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator with an index 'Value' of 1. Connect `Source1` as its input.
 - On a further separate branch, add a [`String`](xref:Bonsai.Expressions.StringProperty) operator with a 'Value' of 'ServerResponse'. Connect this to a [`ConvertToFrame`](xref:Bonsai.ZeroMQ.ConvertToFrame) operator. Connect `Source1` as an input to the [`String`](xref:Bonsai.Expressions.StringProperty).
