@@ -144,7 +144,7 @@ Since the output type of the [`Router`](xref:Bonsai.ZeroMQ.Router) operator has 
 - Finally, connect the output of [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) to a [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) targeting `RouterMessages`. Connect the [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) output to the `WorkflowOutput`.
 
 :::workflow
-![Server message multicast](~/workflows/server-message-multicast.bonsai)
+![BounceBack](~/workflows/server-bounceback.bonsai)
 :::
 
 We had to change quite a few things to modify this workflow so let's step through the general logic. The first thing to note is that since we are avoiding the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator in this implementation we need to pass messages directly into the [`Router`](xref:Bonsai.ZeroMQ.Router). To do this we generate a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source with a `NetMQMessage` output type and connect it to the [`Router`](xref:Bonsai.ZeroMQ.Response). This will change the output type of the [`Router`](xref:Bonsai.ZeroMQ.Router) operator from a `ResponseContext` to a `NetMQMessage` so we need to make some modifications to how we process the stream.
