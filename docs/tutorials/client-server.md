@@ -123,7 +123,7 @@ The [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator has a couple of i
 > [!Note]
 > Imagine, for example, that our Dealer sockets were sending video snippets to a Router server that is tasked with doing some processing of the video and returning the results back to the Dealers. If the responses were not computed in an asynchronous manner we would start to incur a bottleneck on the router if there were many connected Dealers or frequent Dealer requests.
 
-Running this workflow, you should see a 'bounceback' where any [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) client that sends a message receives a reply from the [`Router`](xref:Bonsai.ZeroMQ.Router) server. However, in order to address these messages to specific other clients we need to take a slightly different approach. 
+Running this workflow, you should see a 'bounceback' where any [`Dealer`](xref:Bonsai.ZeroMQ.Dealer) client that sends a message receives a reply from the [`Router`](xref:Bonsai.ZeroMQ.Router) server. However, in order to address these messages to specific other clients we need to take a slightly different approach. Instead of using the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) operator we are going to build messages ourselves and pass them directly into the [`Router`](xref:Bonsai.ZeroMQ.Router). 
 
 - Delete the [`SendResponse`](xref:Bonsai.ZeroMQ.SendResponse) and [`ConvertToString`](xref:Bonsai.ZeroMQ.ConvertToString) branches.
 - Create a [`BehaviorSubject`](xref:Bonsai.Reactive.BehaviorSubject) source with a `NetMQMessage` output type and name it 'RouterMessages' (right-click on an operator with a `NetMQMessage` output type >> CreateSource >> BehaviorSubject). Connect it as an input to the [`Router`](xref:Bonsai.ZeroMQ.Router).
