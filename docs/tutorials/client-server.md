@@ -136,9 +136,9 @@ Running this workflow, you should see a 'bounceback' where any [`Dealer`](xref:B
 
 Since the output type of the [`Router`](xref:Bonsai.ZeroMQ.Router) operator has changed from a `ResponseContext` to a `NetMQMessage` (due to the change in its input) we made some modifications to how we process the stream.  Inside the [`SelectMany`](xref:Bonsai.Reactive.SelectMany) operator we will construct messages by splitting the `NetMQMessage` into its component `NetMQFrame` parts, extracting the relevant frames and merging them together.
 
-- Inside `BounceBack`, expose the `First` property of the `Source1` output.
-- On a separate branch, add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator with an index 'Value' of 1. Connect `Source1` as its input.
-- On a further separate branch, add a [`String`](xref:Bonsai.Expressions.StringProperty) operator with a 'Value' of 'ServerResponse'. Connect this to a [`ConvertToFrame`](xref:Bonsai.ZeroMQ.ConvertToFrame) operator. Connect `Source1` as an input to the [`String`](xref:Bonsai.Expressions.StringProperty).
+- Inside `BounceBack`, expose the `First` property of the `Source1` output, which will give us the address of the `NetMQMessage`.
+- On a separate branch, add an [`Index`](xref:Bonsai.Expressions.IndexBuilder) operator with an index 'Value' of 1. Connect `Source1` as its input. This allows us to grab the middle empty delimiter frame.
+- On a further separate branch, add a [`String`](xref:Bonsai.Expressions.StringProperty) operator with a 'Value' of 'ServerResponse'. Connect this to a [`ConvertToFrame`](xref:Bonsai.ZeroMQ.ConvertToFrame) operator. Connect `Source1` as an input to the [`String`](xref:Bonsai.Expressions.StringProperty). This will serve as the message content.
 - Use [`Merge`](xref:Bonsai.Reactive.Merge) to combine the outputs of these 3 branches (`Source1.First`, `Index`, `ConvertToFrame`).
 - Convert the output to a `NetMQMessage` by connecting a [`Take`](xref:Bonsai.Reactive.Take) operator with a 'Count' property of 3 followed by a [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) operator. 
 - Finally, connect the output of [`ToMessage`](xref:Bonsai.ZeroMQ.ToMessage) to a [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) targeting `RouterMessages`. Connect the [`MulticastSubject`](xref:Bonsai.Expressions.MulticastSubject) output to the `WorkflowOutput`.
