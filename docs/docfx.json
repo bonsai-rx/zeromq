@@ -4,7 +4,7 @@
       "src": [
         {
           "files": [
-            "Bonsai.ZeroMQ/*.csproj"
+            "Bonsai.ZeroMQ/Bonsai.ZeroMQ.csproj"
           ],
           "src": "../src"
         }
@@ -29,6 +29,12 @@
           "articles/**/toc.yml",
           "toc.yml",
           "*.md"
+        ]
+      },
+      {
+        "files": [
+          "tutorials/**.md",
+          "tutorials/toc.yml"
         ]
       },
       {
@@ -64,7 +70,6 @@
       "_enableNewTab": true,
       "_enableSearch": true,
       "_gitContribute": {
-        "repo": "https://github.com/bonsai-rx/zeromq",
         "branch": "main",
         "apiSpecFolder": "docs/apidoc"
       }
