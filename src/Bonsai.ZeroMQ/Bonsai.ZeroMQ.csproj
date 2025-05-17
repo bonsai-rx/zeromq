@@ -3,8 +3,7 @@
   <PropertyGroup>
     <Title>Bonsai - ZeroMQ Library</Title>
     <Description>Bonsai Library containing interfaces for real-time asynchronous streaming of messages using ZeroMQ.</Description>
-    <PackageTags>Bonsai Rx ZeroMQ zmq Networking</PackageTags>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
     <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
 
